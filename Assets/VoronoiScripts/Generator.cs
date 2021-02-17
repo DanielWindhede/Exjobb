@@ -131,7 +131,7 @@ public class Generator : MonoBehaviour
 
         public override int GetHashCode()
         {
-            int hCode = (int)Point1.X ^ (int)Point1.Y ^ (int)Point2.X ^ (int)Point2.Y;
+            int hCode = (int)Point1.x ^ (int)Point1.y ^ (int)Point2.x ^ (int)Point2.y;
             return hCode.GetHashCode();
         }
     }
