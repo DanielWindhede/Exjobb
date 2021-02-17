@@ -47,18 +47,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _testPoints:
-  - {x: 0, y: 0}
-  - {x: 0.296, y: 0}
+  - {x: 0, y: 0.12}
+  - {x: 0, y: -0.16}
+  - {x: 0, y: -0.57}
+  - {x: -0.13, y: 0.03}
+  - {x: -0.25, y: -0.135}
+  - {x: -0.39, y: -0.14}
+  - {x: -0.28, y: -0.3104}
+  - {x: -0.55, y: -0.62}
+  - {x: -0.48, y: 0.39}
+  - {x: 0, y: 0.12}
   _autoCurve: 1
-  _minCurve: 0
+  _minCurve: 2
   _maxCurve: 2
   _size: 1
   _color: {r: 0.2588235, g: 0.75875765, b: 1, a: 1}
   _thickness: 0.01
   _holder: {fileID: 1499016779301501852}
   _turnOffset: {x: 0, y: 0.05}
+  _arrowOffset: {x: 0, y: 0.075, z: 0}
   _turnPrefab: {fileID: 1006604446299814641, guid: 4d6bba607a65ea94f8bf7a9ace5963cf, type: 3}
   _arrowPrefab: {fileID: 3731799228531281970, guid: fe24b98746031df428e249d353a7936c, type: 3}
+  _finishLinePrefab: {fileID: 3731799228531281970, guid: a3d6068da2d7cad4082db52b7a2c77b6, type: 3}
   _stepDistance: 1000
   _maxCordDeviation: 0.05
   _maxTanAngleDeviation: 0.05

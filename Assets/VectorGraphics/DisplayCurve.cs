@@ -22,6 +22,7 @@ public class DisplayCurve : MonoBehaviour
     [SerializeField] Vector3 _arrowOffset = new Vector3(0.075f, 0.035f, 0.0f);
     [SerializeField] GameObject _turnPrefab;
     [SerializeField] GameObject _arrowPrefab;
+    [SerializeField] GameObject _finishLinePrefab;
 
     [Header("TessellationOptions")]
 
@@ -106,19 +107,27 @@ public class DisplayCurve : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Add visuals for turns, arrow and finish line
+    /// </summary>
     void SetupSpawnables()
     {
         BezierPathSegment[] allTurns = _path.Contours[0].Segments;
-        //Skip first one since that is the same as last one
-        for (int i = 1; i < allTurns.Length; i++)
+        //Turns
+        //Skip first and second one since that is the same as last one and 2nd is start line 
+        for (int i = 2; i < allTurns.Length; i++)
         {
             GameObject turnObj = Instantiate(_turnPrefab, allTurns[i].P0 + _turnOffset, Quaternion.identity, _holder) as GameObject;
-            turnObj.GetComponent<TurnNumber>().SetNumber(i);
+            turnObj.GetComponent<TurnNumber>().SetNumber(i - 1);
         }
+        //Arrow
+        GameObject arrow = Instantiate(_arrowPrefab, allTurns[1].P0, Quaternion.identity, _holder) as GameObject;
+        arrow.transform.right = allTurns[2].P0 - allTurns[1].P0;
+        arrow.transform.Translate(_arrowOffset);
 
-        GameObject obj = Instantiate(_arrowPrefab, allTurns[0].P0, Quaternion.identity, _holder) as GameObject;
-        obj.transform.right = allTurns[1].P0 - allTurns[0].P0;
-        obj.transform.Translate(_arrowOffset);
+        //Finish line
+        GameObject finishLine = Instantiate(_finishLinePrefab, allTurns[1].P0, Quaternion.identity, _holder) as GameObject;
+        finishLine.transform.up = allTurns[2].P0 - allTurns[1].P0;
     }
 
     void Display()
