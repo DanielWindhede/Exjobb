@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class BezierCurve
 {
+    static readonly float SCALE = 0.035f;
+
     /// <summary>
     /// Create a bezier curve from a list of points. 
     /// </summary>
@@ -36,6 +38,8 @@ public class BezierCurve
     /// <param name="points">The points</param>
     static Vector2 CalculateControlPoint(int pointIndex, bool forward, float curveAmount, in CurvaturePoint[] points)
     {
+        curveAmount *= SCALE;
+
         int prePoint = Utility.Modulo(pointIndex - 1, points.Length - 1);
         int nextPoint = Utility.Modulo(pointIndex + 1, points.Length - 1);
         //Pointing toward next point

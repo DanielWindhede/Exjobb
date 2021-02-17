@@ -14,9 +14,14 @@ public class DisplayCurve : MonoBehaviour
 
     [Header("Options")]
 
+    [SerializeField, Range(0.001f, 100f)] float _size = 1.0f;
     [SerializeField] Color _color = Color.white;
     [SerializeField, Range(0.01f, 1f)] float _thickness = 0.1f;
-    [SerializeField] float _test = 1.0f;
+    [SerializeField] Transform _holder;
+    [SerializeField] Vector2 _turnOffset = new Vector2(0.025f, 0.025f);
+    [SerializeField] Vector3 _arrowOffset = new Vector3(0.075f, 0.035f, 0.0f);
+    [SerializeField] GameObject _turnPrefab;
+    [SerializeField] GameObject _arrowPrefab;
 
     [Header("TessellationOptions")]
 
@@ -34,6 +39,15 @@ public class DisplayCurve : MonoBehaviour
     {
         SetupOptions();
         SetupMesh();
+
+        //MASTER STUFF
+        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _minCurve, _maxCurve, _autoCurve);
+        SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
+        //MASTER STUFF
+
+        if (Application.isPlaying)
+            SetupSpawnables();
+        Display();
     }
 
     /// <summary>
@@ -78,18 +92,38 @@ public class DisplayCurve : MonoBehaviour
 
     #endregion
 
+
     private void Update()
     {
-        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _minCurve, _maxCurve, _autoCurve);
-        SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
+        if (!Application.isPlaying)
+        {
+            //MASTER STUFF
+            CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _minCurve, _maxCurve, _autoCurve);
+            SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
+            //MASTER STUFF
 
-        if (_path != null)
-            Display();    
+            Display();
+        }
+    }
+
+    void SetupSpawnables()
+    {
+        BezierPathSegment[] allTurns = _path.Contours[0].Segments;
+        //Skip first one since that is the same as last one
+        for (int i = 1; i < allTurns.Length; i++)
+        {
+            GameObject turnObj = Instantiate(_turnPrefab, allTurns[i].P0 + _turnOffset, Quaternion.identity, _holder) as GameObject;
+            turnObj.GetComponent<TurnNumber>().SetNumber(i);
+        }
+
+        GameObject obj = Instantiate(_arrowPrefab, allTurns[0].P0, Quaternion.identity, _holder) as GameObject;
+        obj.transform.right = allTurns[1].P0 - allTurns[0].P0;
+        obj.transform.Translate(_arrowOffset);
     }
 
     void Display()
     {
         List<VectorUtils.Geometry> geometries = VectorUtils.TessellateScene(_scene, _options);
-        VectorUtils.FillMesh(_mesh, geometries, 1.0f);
+        VectorUtils.FillMesh(_mesh, geometries, _size);
     }
 }

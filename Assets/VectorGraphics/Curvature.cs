@@ -5,6 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Input point for creating a bezierCurve later
 /// </summary>
+[System.Serializable]
 public struct CurvaturePoint
 {
     public Vector2 point;
