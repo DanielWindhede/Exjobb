@@ -5,11 +5,15 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class DisplayCurve : MonoBehaviour
 {
+    [Header("TEST")]
+
     [SerializeField] List<Vector2> _testPoints;
+    [SerializeField] bool _autoCurve = true;
+    [SerializeField] float _minCurve = 0.0f;
+    [SerializeField] float _maxCurve = 2.0f;
 
     [Header("Options")]
 
-    [SerializeField, Range(0f, 2f)] float _curveAmount;
     [SerializeField] Color _color = Color.white;
     [SerializeField, Range(0.01f, 1f)] float _thickness = 0.1f;
     [SerializeField] float _test = 1.0f;
@@ -76,18 +80,16 @@ public class DisplayCurve : MonoBehaviour
 
     private void Update()
     {
-        SetupCurve(BezierCurve.ConstructBezierCurve(_testPoints, _curveAmount));
+        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _minCurve, _maxCurve, _autoCurve);
+        SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
 
         if (_path != null)
             Display();    
     }
 
-    /// <summary>
-    /// Display line
-    /// </summary>
     void Display()
     {
         List<VectorUtils.Geometry> geometries = VectorUtils.TessellateScene(_scene, _options);
-        VectorUtils.FillMesh(_mesh, geometries, _test);
+        VectorUtils.FillMesh(_mesh, geometries, 1.0f);
     }
 }
