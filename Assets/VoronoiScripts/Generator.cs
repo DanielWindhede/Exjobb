@@ -6,10 +6,13 @@ using UnityEngine;
 
 public class Generator : MonoBehaviour
 {
+    private static List<Triangle> tempTriangles = new List<Triangle>();
+
     public static List<Triangle> GenerateDelaunayTriangulatedGraph(int pointAmount, Vector2 bounds)
     {
         List<Vector2> points = GeneratePoints(pointAmount, bounds);
-        return BowyerWatson(points, bounds);
+        tempTriangles = BowyerWatson(points, bounds);
+        return tempTriangles;
     }
 
     public static List<Vector2> GeneratePoints(int pointAmount, Vector2 bounds)
@@ -102,8 +105,10 @@ public class Generator : MonoBehaviour
 
     private void Start()
     {
-        GenerateDelaunayTriangulatedGraph(20, new Vector2(2, 2));
+        GenerateDelaunayTriangulatedGraph(7, new Vector2(2, 2));
     }
+
+    private static List<Vector2> tempCirclePoints = new List<Vector2>();
 
     /// <summary>
     /// Returns matrix used to check triangle circumferences
@@ -118,19 +123,6 @@ public class Generator : MonoBehaviour
 
         for (int i = 0; i < array.Length; i++)
             rows[i] = GetRow(array[i]);
-
-        var dA = SumOfSquaredVectorTerms(A);
-        var dB = SumOfSquaredVectorTerms(B);
-        var dC = SumOfSquaredVectorTerms(C);
-
-        var aux1 = (dA * (B.y - A.y) + dB * (A.y - C.y) + dC * (B.y - A.y));
-        var aux2 = -(dA * (C.x - B.x) + dB * (A.x - C.x) + dC * (B.x - A.x));
-        var div = (2 * (A.x * (C.y - B.y) + B.x * (A.y - C.y) + C.x * (B.y - A.y)));
-
-        var center = new Vector2(aux1 / div, aux2 / div);
-        var RadiusSquared = (center.x - A.x) * (center.x - A.x) + (center.y - A.y) * (center.y - A.y);
-        print(center + ", " + RadiusSquared);
-        Debug.DrawRay(center, center + Vector2.right * Mathf.Sqrt(RadiusSquared));
 
         return new Matrix4x4(rows[0], rows[1], rows[2], rows[3]);
     }
@@ -182,36 +174,54 @@ public class Generator : MonoBehaviour
     //    }
     //}
 
-    //private void OnDrawGizmos()
-    //{
-    //    /*
-    //    foreach (var point in points)
-    //    {
-    //        Gizmos.DrawSphere(new Vector3(point.x, point.y, -1), 0.1f);
-    //    }
-    //    */
-        
+    private void OnDrawGizmos()
+    {
+        /*
+        foreach (var point in points)
+        {
+            Gizmos.DrawSphere(new Vector3(point.x, point.y, -1), 0.1f);
+        }
+        */
 
-    //    foreach (var triangle in g)
-    //    {
-    //        Gizmos.DrawLine(triangle.A, triangle.B);
-    //        Gizmos.DrawLine(triangle.B, triangle.C);
-    //        Gizmos.DrawLine(triangle.C, triangle.A);
-    //    }
+        UnityEditor.Handles.color = Color.red;
+        for (int i = 0; i < tempTriangles.Count; i++)
+        {
+            Vector2 A = tempTriangles[i].A;
+            Vector2 B = tempTriangles[i].B;
+            Vector2 C = tempTriangles[i].C;
 
-    //    if (showSuperTriangle)
-    //    {
-    //        Gizmos.DrawLine(Vector3.zero, Vector2.up * tempBounds.y);
-    //        Gizmos.DrawLine(Vector3.zero, Vector2.right * tempBounds.x);
-    //        Gizmos.DrawLine(Vector2.right * tempBounds.x, Vector2.one * tempBounds);
-    //        Gizmos.DrawLine(Vector2.up * tempBounds.y, Vector2.one * tempBounds);
+            float alpha = ((B - C).sqrMagnitude * Vector3.Dot(A - B, A - C)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
+            float beta = ((A - C).sqrMagnitude * Vector3.Dot(B - A, B - C)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
+            float gamma = ((A - B).sqrMagnitude * Vector3.Dot(C - A, C - B)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
+            Vector3 center = alpha * A + beta * B + gamma * C;
+            float radius = ((A - B).magnitude * (B - C).magnitude * (C - A).magnitude) / (2f * Vector3.Cross(A - B, B - C).magnitude);
+            
+            UnityEditor.Handles.DrawWireDisc(center, Vector3.back, radius);
+        }
 
-    //        Triangle superTriangle = GenerateSuperTriangle(tempBounds, tempAngle);
-    //        Gizmos.DrawLine(superTriangle.A, superTriangle.B);
-    //        Gizmos.DrawLine(superTriangle.B, superTriangle.C);
-    //        Gizmos.DrawLine(superTriangle.C, superTriangle.A);
-    //    }
-    //}
+        Gizmos.color = Color.white;
+        foreach (var triangle in tempTriangles)
+        {
+            Gizmos.DrawLine(triangle.A, triangle.B);
+            Gizmos.DrawLine(triangle.B, triangle.C);
+            Gizmos.DrawLine(triangle.C, triangle.A);
+        }
+
+        Gizmos.color = new Color(0.1f, 0.0f, 1.0f);
+        if (true)
+        {
+            Vector2 tempBounds = new Vector2(2, 2);
+            Gizmos.DrawLine(Vector3.zero, Vector2.up * tempBounds.y);
+            Gizmos.DrawLine(Vector3.zero, Vector2.right * tempBounds.x);
+            Gizmos.DrawLine(Vector2.right * tempBounds.x, Vector2.one * tempBounds);
+            Gizmos.DrawLine(Vector2.up * tempBounds.y, Vector2.one * tempBounds);
+
+            Triangle superTriangle = GenerateSuperTriangle(tempBounds);
+            Gizmos.DrawLine(superTriangle.A, superTriangle.B);
+            Gizmos.DrawLine(superTriangle.B, superTriangle.C);
+            Gizmos.DrawLine(superTriangle.C, superTriangle.A);
+        }
+    }
 }
 
 public class MeshGenerator
