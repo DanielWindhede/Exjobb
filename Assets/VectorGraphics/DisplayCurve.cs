@@ -18,7 +18,7 @@ public class DisplayCurve : MonoBehaviour
     [SerializeField] Color _color = Color.white;
     [SerializeField, Range(0.01f, 1f)] float _thickness = 0.1f;
     [SerializeField] Transform _holder;
-    [SerializeField] Vector2 _turnOffset = new Vector2(0.025f, 0.025f);
+    [SerializeField] float _turnOffset = 0.05f;
     [SerializeField] Vector3 _arrowOffset = new Vector3(0.075f, 0.035f, 0.0f);
     [SerializeField] GameObject _turnPrefab;
     [SerializeField] GameObject _arrowPrefab;
@@ -114,12 +114,8 @@ public class DisplayCurve : MonoBehaviour
     {
         BezierPathSegment[] allTurns = _path.Contours[0].Segments;
         //Turns
-        //Skip first and second one since that is the same as last one and 2nd is start line 
-        for (int i = 2; i < allTurns.Length; i++)
-        {
-            GameObject turnObj = Instantiate(_turnPrefab, allTurns[i].P0 + _turnOffset, Quaternion.identity, _holder) as GameObject;
-            turnObj.GetComponent<TurnNumber>().SetNumber(i - 1);
-        }
+        SetupTurns(in allTurns);
+
         //Arrow
         GameObject arrow = Instantiate(_arrowPrefab, allTurns[1].P0, Quaternion.identity, _holder) as GameObject;
         arrow.transform.right = allTurns[2].P0 - allTurns[1].P0;
@@ -128,6 +124,19 @@ public class DisplayCurve : MonoBehaviour
         //Finish line
         GameObject finishLine = Instantiate(_finishLinePrefab, allTurns[1].P0, Quaternion.identity, _holder) as GameObject;
         finishLine.transform.up = allTurns[2].P0 - allTurns[1].P0;
+    }
+
+    void SetupTurns(in BezierPathSegment[] allTurns)
+    {
+        //Skip first and second one since that is the same as last one and 2nd is start line 
+        for (int i = 2; i < allTurns.Length; i++)
+        {
+            Vector2 prePoint = allTurns[Utility.Modulo(i - 1, allTurns.Length - 1)].P0;
+            Vector2 nextPoint = allTurns[Utility.Modulo(i + 1, allTurns.Length - 1)].P0;
+            Vector2 spawnPosition = allTurns[i].P0 + ((allTurns[i].P0 - prePoint) + (allTurns[i].P0 - nextPoint)).normalized * _turnOffset;
+            GameObject turnObj = Instantiate(_turnPrefab, spawnPosition, Quaternion.identity, _holder) as GameObject;
+            turnObj.GetComponent<TurnNumber>().SetNumber(i - 1);
+        }
     }
 
     void Display()
