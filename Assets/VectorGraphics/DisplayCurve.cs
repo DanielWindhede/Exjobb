@@ -11,12 +11,14 @@ public class DisplayCurve : MonoBehaviour
     [SerializeField] bool _autoCurve = true;
     [SerializeField] float _minCurve = 0.0f;
     [SerializeField] float _maxCurve = 2.0f;
+    [SerializeField] float _curvatureScale = 0.035f;
 
     [Header("Options")]
 
+    [SerializeField, Range(0, 180)] float _minTurnAngle = 15f;
     [SerializeField, Range(0.001f, 100f)] float _size = 1.0f;
     [SerializeField] Color _color = Color.white;
-    [SerializeField, Range(0.01f, 1f)] float _thickness = 0.1f;
+    [SerializeField, Range(0.0001f, 1f)] float _thickness = 0.1f;
     [SerializeField] Transform _holder;
     [SerializeField] float _turnOffset = 0.05f;
     [SerializeField] Vector3 _arrowOffset = new Vector3(0.075f, 0.035f, 0.0f);
@@ -42,12 +44,10 @@ public class DisplayCurve : MonoBehaviour
         SetupMesh();
 
         //MASTER STUFF
-        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _minCurve, _maxCurve, _autoCurve);
+        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
         SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
         //MASTER STUFF
 
-        if (Application.isPlaying)
-            SetupSpawnables();
         Display();
     }
 
@@ -64,6 +64,9 @@ public class DisplayCurve : MonoBehaviour
         };
 
         _scene = new Scene() { Root = new SceneNode() { Shapes = new List<Shape> { _path } } };
+
+        if (Application.isPlaying)
+            SetupSpawnables();
     }
 
     #region Setup
@@ -99,10 +102,11 @@ public class DisplayCurve : MonoBehaviour
         if (!Application.isPlaying)
         {
             //MASTER STUFF
-            CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _minCurve, _maxCurve, _autoCurve);
+            CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
             SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
             //MASTER STUFF
 
+            SetupOptions();
             Display();
         }
     }
@@ -133,9 +137,16 @@ public class DisplayCurve : MonoBehaviour
         {
             Vector2 prePoint = allTurns[Utility.Modulo(i - 1, allTurns.Length - 1)].P0;
             Vector2 nextPoint = allTurns[Utility.Modulo(i + 1, allTurns.Length - 1)].P0;
-            Vector2 spawnPosition = allTurns[i].P0 + ((allTurns[i].P0 - prePoint) + (allTurns[i].P0 - nextPoint)).normalized * _turnOffset;
-            GameObject turnObj = Instantiate(_turnPrefab, spawnPosition, Quaternion.identity, _holder) as GameObject;
-            turnObj.GetComponent<TurnNumber>().SetNumber(i - 1);
+            Vector2 preVector = allTurns[i].P0 - prePoint;
+            Vector2 nextVector = allTurns[i].P0 - nextPoint;
+
+            //Skip corners that are barely turning
+            if (Vector2.Angle(-preVector, nextVector) >= _minTurnAngle)
+            {
+                Vector2 spawnPosition = allTurns[i].P0 + (preVector + nextVector).normalized * _turnOffset;
+                GameObject turnObj = Instantiate(_turnPrefab, spawnPosition, Quaternion.identity, _holder) as GameObject;
+                turnObj.GetComponent<TurnNumber>().SetNumber(i - 1);
+            }          
         }
     }
 
