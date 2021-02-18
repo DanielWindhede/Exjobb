@@ -8,40 +8,44 @@ public class Generator : MonoBehaviour
 {
     [SerializeField] private List<Vector2> values;
     [SerializeField] private List<Vector2> points;
-    private MeshGenerator _renderer;
-    private MeshGenerator Renderer
-    {
-        get
-        {
-            if (_renderer == null)
-                _renderer = new MeshGenerator(GetComponent<MeshFilter>());
-            return _renderer;
-        }
-    }
 
     private void Start()
     {
         //GenerateDelaunayTriangulatedGraph();
     }
 
-    struct Triangle
+    public struct Triangle
     {
-        public Vector2 a, b, c;
-        
+        public Vector2[] vertices;
+
         public Triangle(Vector2 a, Vector2 b, Vector2 c)
         {
-            this.a = a;
-            this.b = b;
-            this.c = c;
+            this.vertices = new Vector2[]
+            { 
+                a, b, c
+            };
+        }
+
+        public bool SharesAnyVertex(Triangle tri)
+        {
+            foreach (Vector2 vertex in vertices)
+            {
+                for (int i = 0; i < tri.vertices.Length; i++)
+                {
+                    if (vertex == tri.vertices[i])
+                        return true;
+                }
+            }
+            return false;
         }
     }
 
-    private List<Triangle> BowyerWatson()
+    private List<Triangle> BowyerWatson(List<Vector2> points)
     {
         List<Vector2> v = new List<Vector2>();
 
+        //HashSet<Vector2> p = new HashSet<Vector2>(points);
         HashSet<Vector2> p = new HashSet<Vector2>(points);
-
         /*
         Vector2 A, B, C, point;
         A = values[0];
@@ -52,9 +56,14 @@ public class Generator : MonoBehaviour
 
         List<Triangle> triangulation = new List<Triangle>();
 
-        triangulation.Add(new Triangle(new Vector2(-10, -10),
-                                       new Vector2(10, -10),
-                                       new Vector2(0, 10)));
+        /*
+        Triangle superTriangle = new Triangle(new Vector2(10, 20),
+                                       new Vector2(0, 0),
+                                       new Vector2(20, 0));
+        */
+
+        Triangle superTriangle = GenerateSuperTriangle(tempBounds, tempAngle);
+        triangulation.Add(superTriangle);
 
         foreach (var point in points)
         {
@@ -72,9 +81,9 @@ public class Generator : MonoBehaviour
             List<Edge> edges = new List<Edge>();
             foreach (var triangle in badTriangles)
             {
-                edges.Add(new Edge(triangle.a, triangle.b));
-                edges.Add(new Edge(triangle.b, triangle.c));
-                edges.Add(new Edge(triangle.c, triangle.a));
+                edges.Add(new Edge(triangle.vertices[0], triangle.vertices[1]));
+                edges.Add(new Edge(triangle.vertices[1], triangle.vertices[2]));
+                edges.Add(new Edge(triangle.vertices[2], triangle.vertices[0]));
             }
             IEnumerable<Edge> boundry = edges.GroupBy(x => x).Where(g => g.Count() == 1).Select(x => x.Key); // Gets edges without duplicates
             polygon = new HashSet<Edge>(boundry);
@@ -87,14 +96,18 @@ public class Generator : MonoBehaviour
             foreach (var edge in polygon)
             {
                 //newTri := form a triangle from edge to point
+                Triangle newTri = new Triangle(edge.Point1, edge.Point2, point);
+                triangulation.Add(newTri);
                 //add newTri to triangulation
             }
         }
-        foreach (var triangle in triangulation)
+        for (int i = triangulation.Count - 1; i >= 0; i--)
         {
-            // if triangle contains a vertex from original super-triangle
-            // remove triangle from triangulation
+            Triangle triangle = triangulation[i];
+            if (triangle.SharesAnyVertex(superTriangle))
+                triangulation.RemoveAt(i);
         }
+
         return triangulation;
 
         /*
@@ -103,6 +116,30 @@ public class Generator : MonoBehaviour
         */
 
         values = new List<Vector2>(v);
+    }
+
+    public List<Vector2> GeneratePoints(int pointAmount, Vector2 bounds)
+    {
+        List<Vector2> points = new List<Vector2>();
+
+        for (int i = 0; i < pointAmount; i++) // possibilty for duplicates
+        {
+            float x = UnityEngine.Random.Range(0f, bounds.x);
+            float y = UnityEngine.Random.Range(0f, bounds.y);
+            points.Add(new Vector2(x, y));
+        }
+
+        return points;
+    }
+
+    public Triangle GenerateSuperTriangle(Vector2 innerBounds, float angle = 45)
+    {
+        float angleA = angle;
+        float angleB = 90 - angle;
+        Vector2 pointA = new Vector2(0, innerBounds.y + innerBounds.x * Mathf.Tan(angleA * Mathf.Deg2Rad));
+        Vector2 pointB = Vector2.zero;
+        Vector2 pointC = new Vector2(innerBounds.x + innerBounds.y * Mathf.Tan(angleB * Mathf.Deg2Rad), 0);
+        return new Triangle(pointA, pointB, pointC);
     }
 
     public class Edge
@@ -138,7 +175,7 @@ public class Generator : MonoBehaviour
 
     private Matrix4x4 GetMatrixFromTriangle(Triangle triangle, Vector2 point)
     {
-        return GetMatrixFromTriangle(triangle.a, triangle.b, triangle.c, point);
+        return GetMatrixFromTriangle(triangle.vertices[0], triangle.vertices[1], triangle.vertices[2], point);
     }
     private Matrix4x4 GetMatrixFromTriangle(Vector2 A, Vector2 B, Vector2 C, Vector2 point)
     {
@@ -151,10 +188,12 @@ public class Generator : MonoBehaviour
         for (int i = 0; i < arr.Length; i++)
             cols[i] = GetCol(arr[i]);
 
+        /*
         foreach (var col in cols)
         {
             print(col);
         }
+        */
 
         return new Matrix4x4(cols[0], cols[1], cols[2], cols[3]);
     }
@@ -176,39 +215,68 @@ public class Generator : MonoBehaviour
 
     private void OnValidate()
     {
-        Renderer.GenerateMesh(values);
+        GetComponent<MeshFilter>().mesh = MeshGenerator.GenerateMesh(values);
+        if (generate)
+        {
+            generate = false;
+            var points = GeneratePoints(tempPointAmount, tempBounds);
+            g = BowyerWatson(points);
+        }
     }
+
+    List<Triangle> g = new List<Triangle>();
+
+    public float tempAngle = 45;
+    public Vector2 tempBounds;
+    public int tempPointAmount = 20;
+    public bool showSuperTriangle;
+    public bool generate;
 
     private void OnDrawGizmos()
     {
+        /*
         foreach (var point in points)
         {
             Gizmos.DrawSphere(new Vector3(point.x, point.y, -1), 0.1f);
+        }
+        */
+        
+
+        foreach (var triangle in g)
+        {
+            Gizmos.DrawLine(triangle.vertices[0], triangle.vertices[1]);
+            Gizmos.DrawLine(triangle.vertices[1], triangle.vertices[2]);
+            Gizmos.DrawLine(triangle.vertices[2], triangle.vertices[0]);
+        }
+
+        if (showSuperTriangle)
+        {
+            Gizmos.DrawLine(Vector3.zero, Vector2.up * tempBounds.y);
+            Gizmos.DrawLine(Vector3.zero, Vector2.right * tempBounds.x);
+            Gizmos.DrawLine(Vector2.right * tempBounds.x, Vector2.one * tempBounds);
+            Gizmos.DrawLine(Vector2.up * tempBounds.y, Vector2.one * tempBounds);
+
+            Triangle superTriangle = GenerateSuperTriangle(tempBounds, tempAngle);
+            Gizmos.DrawLine(superTriangle.vertices[0], superTriangle.vertices[1]);
+            Gizmos.DrawLine(superTriangle.vertices[1], superTriangle.vertices[2]);
+            Gizmos.DrawLine(superTriangle.vertices[2], superTriangle.vertices[0]);
         }
     }
 }
 
 public class MeshGenerator
 {
-    private MeshFilter _meshFilter;
-    private Mesh _mesh;
-    private Vector3[] _vertices;
-    private Vector3[] _fullVertices;
-    private Vector2[] _uv;
-    private int[] _triangles;
-
-    public MeshGenerator(MeshFilter meshFilter)
-    {
-        _meshFilter = meshFilter;
-    }
-
-    public void GenerateMesh(List<Vector2> values)
+    public static Mesh GenerateMesh(List<Vector2> values)
     {
         int count = values.Count;
 
         if (count > 0)
         {
-            _mesh = new Mesh();
+            int[] _triangles;
+            Vector3[] _vertices;
+            Vector3[] _fullVertices;
+            Vector2[] _uv;
+            Mesh _mesh = new Mesh();
 
             _vertices = new Vector3[count + 1];
             _uv = new Vector2[count + 1];
@@ -242,8 +310,8 @@ public class MeshGenerator
             _mesh.uv = _uv;
             _mesh.triangles = _triangles;
 
-            //_mesh.RecalculateBounds();
-            _meshFilter.mesh = _mesh;
+            return _mesh;
         }
+        return null;
     }
 }
