@@ -2,17 +2,8 @@
 using Unity.VectorGraphics;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class DisplayCurve : MonoBehaviour
 {
-    [Header("TEST")]
-
-    [SerializeField] List<Vector2> _testPoints;
-    [SerializeField] bool _autoCurve = true;
-    [SerializeField] float _minCurve = 0.0f;
-    [SerializeField] float _maxCurve = 2.0f;
-    [SerializeField] float _curvatureScale = 0.035f;
-
     [Header("Options")]
 
     [SerializeField, Range(0, 180)] float _minTurnAngle = 15f;
@@ -42,13 +33,6 @@ public class DisplayCurve : MonoBehaviour
     {
         SetupOptions();
         SetupMesh();
-
-        //MASTER STUFF
-        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
-        SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
-        //MASTER STUFF
-
-        Display();
     }
 
     /// <summary>
@@ -65,8 +49,8 @@ public class DisplayCurve : MonoBehaviour
 
         _scene = new Scene() { Root = new SceneNode() { Shapes = new List<Shape> { _path } } };
 
-        if (Application.isPlaying)
-            SetupSpawnables();
+        SetupSpawnables();
+        Display();
     }
 
     #region Setup
@@ -95,21 +79,6 @@ public class DisplayCurve : MonoBehaviour
     }
 
     #endregion
-
-
-    private void Update()
-    {
-        if (!Application.isPlaying)
-        {
-            //MASTER STUFF
-            CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_testPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
-            SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
-            //MASTER STUFF
-
-            SetupOptions();
-            Display();
-        }
-    }
 
     /// <summary>
     /// Add visuals for turns, arrow and finish line

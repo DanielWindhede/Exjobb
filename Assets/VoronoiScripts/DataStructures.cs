@@ -19,7 +19,7 @@ public class Triangle
     {
         this.vertices = new Vector2[]
         {
-                a, b, c
+            a, b, c
         };
 
         // Can be optimized:)
