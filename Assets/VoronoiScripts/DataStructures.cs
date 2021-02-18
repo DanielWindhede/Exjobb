@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public struct Triangle
+public class Triangle
 {
     public Vector2[] vertices;
 
@@ -8,12 +8,28 @@ public struct Triangle
     public Vector2 B { get { return vertices[1]; } }
     public Vector2 C { get { return vertices[2]; } }
 
+    public Vector2 Center { get; private set; }
+    public float Radius { get; private set; }
+    public bool IsPointWithinCircumference(Vector2 point)
+    {
+        return (point - Center).sqrMagnitude < Radius * Radius;
+    }
+
     public Triangle(Vector2 a, Vector2 b, Vector2 c)
     {
         this.vertices = new Vector2[]
         {
                 a, b, c
         };
+
+        // Can be optimized:)
+        float alpha = ((B - C).sqrMagnitude * Vector3.Dot(A - B, A - C)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
+        float beta = ((A - C).sqrMagnitude * Vector3.Dot(B - A, B - C)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
+        float gamma = ((A - B).sqrMagnitude * Vector3.Dot(C - A, C - B)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
+
+        Center = alpha * A + beta * B + gamma * C;
+
+        Radius = ((A - B).magnitude * (B - C).magnitude * (C - A).magnitude) / (2f * Vector3.Cross(A - B, B - C).magnitude);
     }
 
     public bool SharesAnyVertex(Triangle triangle)

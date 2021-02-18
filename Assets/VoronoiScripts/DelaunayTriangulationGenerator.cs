@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Generator : MonoBehaviour
+public class DelaunayTriangulationGenerator : MonoBehaviour
 {
     private static List<Triangle> tempTriangles = new List<Triangle>();
 
@@ -43,9 +43,13 @@ public class Generator : MonoBehaviour
             HashSet<Triangle> badTriangles = new HashSet<Triangle>();
             foreach (Triangle triangle in triangulation)
             {
+                if (triangle.IsPointWithinCircumference(point))
+                    badTriangles.Add(triangle);
+                /*
                 Matrix4x4 matrix = GetMatrixFromTriangle(triangle.A, triangle.B, triangle.C, point);
                 if (IsPointWithinCircumference(matrix))
                     badTriangles.Add(triangle);
+                */
             }
 
             // Handle bad triangles
@@ -103,13 +107,7 @@ public class Generator : MonoBehaviour
         return new Triangle(pointA, pointB, pointC);
     }
 
-    private void Start()
-    {
-        GenerateDelaunayTriangulatedGraph(7, new Vector2(2, 2));
-    }
-
-    private static List<Vector2> tempCirclePoints = new List<Vector2>();
-
+    /*
     /// <summary>
     /// Returns matrix used to check triangle circumferences
     /// </summary>
@@ -147,7 +145,7 @@ public class Generator : MonoBehaviour
     {
         return m.determinant > 0;
     }
-
+    */
 
 
 
@@ -174,6 +172,15 @@ public class Generator : MonoBehaviour
     //    }
     //}
 
+    private void Start()
+    {
+        GenerateDelaunayTriangulatedGraph(pointCount, new Vector2(2, 2));
+    }
+
+    private static List<Vector2> tempCirclePoints = new List<Vector2>();
+
+    public int pointCount = 100;
+    public int index = -1;
     private void OnDrawGizmos()
     {
         /*
@@ -195,8 +202,9 @@ public class Generator : MonoBehaviour
             float gamma = ((A - B).sqrMagnitude * Vector3.Dot(C - A, C - B)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
             Vector3 center = alpha * A + beta * B + gamma * C;
             float radius = ((A - B).magnitude * (B - C).magnitude * (C - A).magnitude) / (2f * Vector3.Cross(A - B, B - C).magnitude);
-            
-            UnityEditor.Handles.DrawWireDisc(center, Vector3.back, radius);
+
+            if (index == i || index < 0)
+                UnityEditor.Handles.DrawWireDisc(center, Vector3.back, radius);
         }
 
         Gizmos.color = Color.white;
