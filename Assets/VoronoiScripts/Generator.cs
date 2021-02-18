@@ -100,6 +100,11 @@ public class Generator : MonoBehaviour
         return new Triangle(pointA, pointB, pointC);
     }
 
+    private void Start()
+    {
+        GenerateDelaunayTriangulatedGraph(20, new Vector2(2, 2));
+    }
+
     /// <summary>
     /// Returns matrix used to check triangle circumferences
     /// </summary>
@@ -113,6 +118,19 @@ public class Generator : MonoBehaviour
 
         for (int i = 0; i < array.Length; i++)
             rows[i] = GetRow(array[i]);
+
+        var dA = SumOfSquaredVectorTerms(A);
+        var dB = SumOfSquaredVectorTerms(B);
+        var dC = SumOfSquaredVectorTerms(C);
+
+        var aux1 = (dA * (B.y - A.y) + dB * (A.y - C.y) + dC * (B.y - A.y));
+        var aux2 = -(dA * (C.x - B.x) + dB * (A.x - C.x) + dC * (B.x - A.x));
+        var div = (2 * (A.x * (C.y - B.y) + B.x * (A.y - C.y) + C.x * (B.y - A.y)));
+
+        var center = new Vector2(aux1 / div, aux2 / div);
+        var RadiusSquared = (center.x - A.x) * (center.x - A.x) + (center.y - A.y) * (center.y - A.y);
+        print(center + ", " + RadiusSquared);
+        Debug.DrawRay(center, center + Vector2.right * Mathf.Sqrt(RadiusSquared));
 
         return new Matrix4x4(rows[0], rows[1], rows[2], rows[3]);
     }
