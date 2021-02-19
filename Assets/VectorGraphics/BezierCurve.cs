@@ -20,15 +20,10 @@ public class BezierCurve
             //Set the actual point
             path[i].P0 = points[i].point;
             //Outgoing control point from actual point
-            bool redo = false;
-            path[i].P1 = CalculateControlPoint(i, true, points[i].curveAmount, points, ref redo);
-            //Redo last points P2
-            if (redo)
-                path[Utility.Modulo(i - 1, points.Length - 1)].P2 = CalculateControlPoint(i, false, points[i].curveAmount, points, ref redo);
-
+            path[i].P1 = CalculateControlPoint(i, true, points[i].curveAmount, points);
             //In going control point to next point
             int nextPointIndex = Utility.Modulo(i + 1, points.Length - 1);
-            path[i].P2 = CalculateControlPoint(nextPointIndex, false, points[nextPointIndex].curveAmount, points, ref redo);
+            path[i].P2 = CalculateControlPoint(nextPointIndex, false, points[nextPointIndex].curveAmount, points);
         }
 
         return path;
@@ -40,7 +35,7 @@ public class BezierCurve
     /// <param name="pointIndex">Reference middle point index</param>
     /// <param name="forward">Should the direction point along the points direction?</param>
     /// <param name="points">The points</param>
-    static Vector2 CalculateControlPoint(int pointIndex, bool forward, float curveAmount, CurvaturePoint[] points, ref bool redoLast)
+    static Vector2 CalculateControlPoint(int pointIndex, bool forward, float curveAmount, CurvaturePoint[] points)
     {
         int prePoint = Utility.Modulo(pointIndex - 1, points.Length - 1);
         int nextPoint = Utility.Modulo(pointIndex + 1, points.Length - 1);

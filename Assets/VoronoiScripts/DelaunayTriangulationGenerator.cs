@@ -11,7 +11,20 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
     public static List<Triangle> GenerateDelaunayTriangulatedGraph(int pointAmount, Vector2 bounds)
     {
         List<Vector2> points = GeneratePoints(pointAmount, bounds);
-        tempTriangles = BowyerWatson(points, bounds);
+
+        Triangle superTriangle = GenerateSuperTriangle(bounds);
+        List<Triangle> triangulation = BowyerWatson(new List<Triangle> { superTriangle }, points, bounds);
+
+        // Removes super triangle
+        for (int i = triangulation.Count - 1; i >= 0; i--)
+        {
+            Triangle triangle = triangulation[i];
+            if (triangle.SharesAnyVertex(superTriangle))
+                triangulation.RemoveAt(i);
+        }
+
+        tempTriangles = triangulation;
+
         return tempTriangles;
     }
 
@@ -29,12 +42,12 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
         return points;
     }
 
-    public static List<Triangle> BowyerWatson(List<Vector2> points, Vector2 bounds)
+    public static List<Triangle> BowyerWatson(List<Triangle> mesh, List<Vector2> points, Vector2 bounds)
     {
-        List<Triangle> triangulation = new List<Triangle>();
+        List<Triangle> triangulation = mesh;
 
-        Triangle superTriangle = GenerateSuperTriangle(bounds);
-        triangulation.Add(superTriangle);
+        //Triangle superTriangle = GenerateSuperTriangle(bounds);
+        //triangulation.Add(superTriangle);
 
         // Add all points sequentially to the triangulation
         foreach (Vector2 point in points)
@@ -79,13 +92,13 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
             }
         }
 
-        // Removes super triangle
-        for (int i = triangulation.Count - 1; i >= 0; i--)
-        {
-            Triangle triangle = triangulation[i];
-            if (triangle.SharesAnyVertex(superTriangle))
-                triangulation.RemoveAt(i);
-        }
+        //// Removes super triangle
+        //for (int i = triangulation.Count - 1; i >= 0; i--)
+        //{
+        //    Triangle triangle = triangulation[i];
+        //    if (triangle.SharesAnyVertex(superTriangle))
+        //        triangulation.RemoveAt(i);
+        //}
 
         return triangulation;
     }

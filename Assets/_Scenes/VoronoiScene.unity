@@ -450,17 +450,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ed93d35f6185074189b802c40d8489d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  values:
-  - {x: 0, y: 3.68}
-  - {x: -4.71, y: -3.33}
-  - {x: 5.09, y: -3.19}
-  points:
-  - {x: 1, y: 0}
-  tempAngle: 45
-  tempBounds: {x: 20, y: 20}
-  tempPointAmount: 200
-  showSuperTriangle: 0
-  generate: 0
+  pointCount: 3
+  index: -1
 --- !u!4 &1731026793
 Transform:
   m_ObjectHideFlags: 0
