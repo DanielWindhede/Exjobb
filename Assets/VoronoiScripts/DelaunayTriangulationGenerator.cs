@@ -46,9 +46,6 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
     {
         List<Triangle> triangulation = mesh;
 
-        //Triangle superTriangle = GenerateSuperTriangle(bounds);
-        //triangulation.Add(superTriangle);
-
         // Add all points sequentially to the triangulation
         foreach (Vector2 point in points)
         {
@@ -58,11 +55,6 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
             {
                 if (triangle.IsPointWithinCircumference(point))
                     badTriangles.Add(triangle);
-                /*
-                Matrix4x4 matrix = GetMatrixFromTriangle(triangle.A, triangle.B, triangle.C, point);
-                if (IsPointWithinCircumference(matrix))
-                    badTriangles.Add(triangle);
-                */
             }
 
             // Handle bad triangles
@@ -92,14 +84,6 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
             }
         }
 
-        //// Removes super triangle
-        //for (int i = triangulation.Count - 1; i >= 0; i--)
-        //{
-        //    Triangle triangle = triangulation[i];
-        //    if (triangle.SharesAnyVertex(superTriangle))
-        //        triangulation.RemoveAt(i);
-        //}
-
         return triangulation;
     }
 
@@ -108,7 +92,7 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
     /// </summary>
     /// <param name="innerBounds">Rectangle that must be included</param>
     /// <param name="angle">Aesthetic, leave blank if unsure (0 - 90)</param>
-    private static Triangle GenerateSuperTriangle(Vector2 innerBounds, float angle = 45)
+    public static Triangle GenerateSuperTriangle(Vector2 innerBounds, float angle = 45)
     {
         angle = Mathf.Clamp(angle, 0f, 90f);
 
@@ -119,131 +103,30 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
         Vector2 pointC = new Vector2(innerBounds.x + innerBounds.y * Mathf.Tan(angleB * Mathf.Deg2Rad), 0);
         return new Triangle(pointA, pointB, pointC);
     }
-
-    /*
-    /// <summary>
-    /// Returns matrix used to check triangle circumferences
-    /// </summary>
-    private static Matrix4x4 GetMatrixFromTriangle(Vector2 A, Vector2 B, Vector2 C, Vector2 point)
-    {
-        Vector4[] rows = new Vector4[4];
-        Vector2[] array = new Vector2[]
-        {
-            A, B, C, point
-        };
-
-        for (int i = 0; i < array.Length; i++)
-            rows[i] = GetRow(array[i]);
-
-        return new Matrix4x4(rows[0], rows[1], rows[2], rows[3]);
-    }
-
-    /// <summary>
-    /// Calculate matrix row based on Vector value
-    /// </summary>
-    private static Vector4 GetRow(Vector2 value)
-    {
-        return new Vector4(value.x, value.y, SumOfSquaredVectorTerms(value), 1);
-    }
-
-    /// <summary>
-    /// Returns sum of square of both Vector terms, (Used to calculate M3 in GetRow)
-    /// </summary>
-    private static float SumOfSquaredVectorTerms(Vector2 value)
-    {
-        return value.x * value.x + value.y * value.y;
-    }
-
-    private static bool IsPointWithinCircumference(Matrix4x4 m)
-    {
-        return m.determinant > 0;
-    }
-    */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //private void OnValidate()
-    //{
-    //    GetComponent<MeshFilter>().mesh = MeshGenerator.GenerateMesh(values);
-    //    if (generate)
-    //    {
-    //        generate = false;
-    //        var points = GeneratePoints(tempPointAmount, tempBounds);
-    //        g = BowyerWatson(points);
-    //    }
-    //}
-
-    private void Start()
-    {
-        GenerateDelaunayTriangulatedGraph(pointCount, new Vector2(2, 2));
-    }
-
-    private static List<Vector2> tempCirclePoints = new List<Vector2>();
-
-    public int pointCount = 100;
-    public int index = -1;
-    private void OnDrawGizmos()
-    {
-        /*
-        foreach (var point in points)
-        {
-            Gizmos.DrawSphere(new Vector3(point.x, point.y, -1), 0.1f);
-        }
-        */
-
-        UnityEditor.Handles.color = Color.red;
-        for (int i = 0; i < tempTriangles.Count; i++)
-        {
-            Vector2 A = tempTriangles[i].A;
-            Vector2 B = tempTriangles[i].B;
-            Vector2 C = tempTriangles[i].C;
-
-            float alpha = ((B - C).sqrMagnitude * Vector3.Dot(A - B, A - C)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
-            float beta = ((A - C).sqrMagnitude * Vector3.Dot(B - A, B - C)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
-            float gamma = ((A - B).sqrMagnitude * Vector3.Dot(C - A, C - B)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
-            Vector3 center = alpha * A + beta * B + gamma * C;
-            float radius = ((A - B).magnitude * (B - C).magnitude * (C - A).magnitude) / (2f * Vector3.Cross(A - B, B - C).magnitude);
-
-            if (index == i || index < 0)
-                UnityEditor.Handles.DrawWireDisc(center, Vector3.back, radius);
-        }
-
-        Gizmos.color = Color.white;
-        foreach (var triangle in tempTriangles)
-        {
-            Gizmos.DrawLine(triangle.A, triangle.B);
-            Gizmos.DrawLine(triangle.B, triangle.C);
-            Gizmos.DrawLine(triangle.C, triangle.A);
-        }
-
-        Gizmos.color = new Color(0.1f, 0.0f, 1.0f);
-        if (true)
-        {
-            Vector2 tempBounds = new Vector2(2, 2);
-            Gizmos.DrawLine(Vector3.zero, Vector2.up * tempBounds.y);
-            Gizmos.DrawLine(Vector3.zero, Vector2.right * tempBounds.x);
-            Gizmos.DrawLine(Vector2.right * tempBounds.x, Vector2.one * tempBounds);
-            Gizmos.DrawLine(Vector2.up * tempBounds.y, Vector2.one * tempBounds);
-
-            Triangle superTriangle = GenerateSuperTriangle(tempBounds);
-            Gizmos.DrawLine(superTriangle.A, superTriangle.B);
-            Gizmos.DrawLine(superTriangle.B, superTriangle.C);
-            Gizmos.DrawLine(superTriangle.C, superTriangle.A);
-        }
-    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class MeshGenerator
 {

@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
+    [Header("Delaunay Triangulation Settings")]
+
+    [SerializeField] private int _pointAmount;
+    [SerializeField] private Vector2 _bounds;
+
     [Header("Settings")]
 
     [SerializeField] int _seed;
@@ -15,20 +20,25 @@ public class Controller : MonoBehaviour
     [SerializeField] float _curvatureScale = 0.035f;
 
     DisplayCurve _displayCurveScript;
+    DisplayDelaunayTriangulation _displayDelaunayTriangulation;
 
     private void Awake()
     {
         _displayCurveScript = GetComponentInChildren<DisplayCurve>();
+        _displayDelaunayTriangulation = GetComponentInChildren<DisplayDelaunayTriangulation>();
     }
 
     private void Start()
     {
         Random.InitState(_seed);
 
-        if (_useManualPoints)
-        {
-            CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_manualPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
-            _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
-        }      
+        List<Triangle> triangulation = DelaunayTriangulationGenerator.GenerateDelaunayTriangulatedGraph(_pointAmount, _bounds);
+        _displayDelaunayTriangulation.Display(triangulation, _bounds);
+
+        //if (_useManualPoints)
+        //{
+        //    CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_manualPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
+        //    _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
+        //}      
     }
 }
