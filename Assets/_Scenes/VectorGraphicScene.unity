@@ -417,9 +417,41 @@ PrefabInstance:
       propertyPath: _manualPoints.Array.data[5].y
       value: 0.25
       objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _pointAmount
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _bounds.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _bounds.y
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7311257194510682409, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: m_Name
       value: Controller
+      objectReference: {fileID: 0}
+    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _use
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _showSuperTriangles
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _showCircles
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _circleCenterRadius1
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _circleCenterRadius2
+      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 9000754081786110718, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: m_Mesh

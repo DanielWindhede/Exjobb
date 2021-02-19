@@ -108,29 +108,31 @@ public class Edge
 }
 
 [System.Serializable]
-public class Graph
+public class VoronoiGraph
 {
-    public List<Node> _allNodes = new List<Node>();
+    public List<GraphNode> _allNodes = new List<GraphNode>();
+    public HashSet<Vector2> _allPoints = new HashSet<Vector2>();
 
-    public Graph(List<Node> nodes)
+    public VoronoiGraph(List<GraphNode> nodes, HashSet<Vector2> allPoints)
     {
         _allNodes = nodes;
+        _allPoints = allPoints;
     }
 }
 
 [System.Serializable]
-public class Node
+public class GraphNode
 {
     public Vector2 position;
-    public List<Node> neighborNodes = new List<Node>();
+    public List<Vector2> neighborNodePositions = new List<Vector2>();
 
-    public Node(Vector2 position)
+    public GraphNode(Vector2 position)
     {
         this.position = position;
     }
 
-    public void AddNeighbour(Node newNeighbour)
+    public void AddNeighbourPosition(Vector2 newNeighbour)
     {
-        neighborNodes.Add(newNeighbour);
+        neighborNodePositions.Add(newNeighbour);
     }
 }

@@ -21,13 +21,13 @@ public class Controller : MonoBehaviour
 
     DisplayCurve _displayCurveScript;
     DisplayDelaunayTriangulation _displayDelaunayTriangulation;
-    DisplayGraph _displayGraph;
+    DisplayVoronoiGraph _displayGraph;
 
     private void Awake()
     {
         _displayCurveScript = GetComponentInChildren<DisplayCurve>();
         _displayDelaunayTriangulation = GetComponentInChildren<DisplayDelaunayTriangulation>();
-        _displayGraph = GetComponentInChildren<DisplayGraph>();
+        _displayGraph = GetComponentInChildren<DisplayVoronoiGraph>();
     }
 
     private void Start()
@@ -36,7 +36,7 @@ public class Controller : MonoBehaviour
 
         List<Triangle> triangulation = DelaunayTriangulationGenerator.GenerateDelaunayTriangulatedGraph(_pointAmount, _bounds);
         _displayDelaunayTriangulation.Display(triangulation, _bounds);
-        Graph voronoiGraph = VoronoiDiagramGenerator.GenerateVoronoiFromDelaunay(triangulation);
+        VoronoiGraph voronoiGraph = VoronoiDiagramGenerator.GenerateVoronoiFromDelaunay(triangulation);
         _displayGraph.Display(voronoiGraph);
 
         //if (_useManualPoints)

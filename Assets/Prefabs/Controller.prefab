@@ -89,19 +89,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ee3f82cf59c8c4db947a4dd161f0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _use: 0
+  _use: 1
   _displayAll: 1
   _index: -1
-  _circleCenterRadius1: 0.1
-  _circleCenterRadius2: 0.1
+  _circleCenterRadius1: 0.01
+  _circleCenterRadius2: 0.005
   _circleColors: {r: 1, g: 0, b: 0, a: 1}
-  _triangleColors: {r: 1, g: 1, b: 1, a: 1}
-  _superTriangleColors: {r: 0, g: 1, b: 0, a: 1}
-  _circleCenterColor1: {r: 1, g: 1, b: 1, a: 1}
-  _circleCenterColor2: {r: 0, g: 0, b: 0, a: 1}
-  _showCircles: 1
+  _triangleColors: {r: 0, g: 0, b: 0, a: 1}
+  _superTriangleColors: {r: 0.80030656, g: 1, b: 0, a: 1}
+  _circleCenterColor1: {r: 0, g: 0, b: 0, a: 1}
+  _circleCenterColor2: {r: 1, g: 1, b: 1, a: 1}
+  _showCircles: 0
   _showTriangles: 1
-  _showSuperTriangles: 1
+  _showSuperTriangles: 0
   _showCircleCenters: 1
 --- !u!1 &7311257194510682409
 GameObject:
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfbceaafab088149887af390c0e9530, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pointAmount: 0
-  _bounds: {x: 0, y: 0}
+  _pointAmount: 100
+  _bounds: {x: 2, y: 2}
   _seed: 0
   _useManualPoints: 1
   _manualPoints:
@@ -159,10 +159,10 @@ MonoBehaviour:
   - {x: 0.5, y: 0}
   - {x: 0.5, y: 0.5}
   - {x: 0, y: 0.5}
-  - {x: -0.5, y: -0.5}
+  - {x: -0.25, y: 0.25}
   - {x: 0, y: 0}
   _autoCurve: 1
-  _minCurve: 0
+  _minCurve: 0.25
   _maxCurve: 2
   _curvatureScale: 0.035
 --- !u!1001 &4572097181526010211
