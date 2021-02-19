@@ -405,9 +405,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _pointAmount
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _useManualPoints
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _bounds.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _bounds.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _seed
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7311257194510682409, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: m_Name
       value: Controller
+      objectReference: {fileID: 0}
+    - target: {fileID: 8880874960588151616, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _show
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _showSuperTriangles
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _showCircles
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _use
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}

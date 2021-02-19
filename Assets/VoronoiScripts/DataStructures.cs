@@ -134,15 +134,15 @@ public class GraphNode
     /// <summary>
     /// Positions of neighbouring nodes
     /// </summary>
-    public List<Vector2> neighborNodePositions = new List<Vector2>();
+    public List<int> neighborNodeIndexes = new List<int>();
 
     public GraphNode(Vector2 position)
     {
         this.position = position;
     }
 
-    public void AddNeighbourPosition(Vector2 newNeighbour)
+    public void AddNeighbourPosition(int newNeighbour)
     {
-        neighborNodePositions.Add(newNeighbour);
+        neighborNodeIndexes.Add(newNeighbour);
     }
 }

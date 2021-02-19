@@ -35,7 +35,7 @@ public class VoronoiDiagramGenerator
 
                 if (triangulation[i].SharesAnyEdge(triangulation[j]))
                 {
-                    allNodes[i].AddNeighbourPosition(allNodes[j].position);
+                    allNodes[i].AddNeighbourPosition(j);
                     edgeCounter++;
                 }
             }

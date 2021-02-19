@@ -29,9 +29,9 @@ public class DisplayVoronoiGraph : MonoBehaviour
 
         foreach (GraphNode node in _graph._allNodes)
         {
-            foreach (Vector2 neighbourNodePosition in node.neighborNodePositions)
+            foreach (int neighbourNode in node.neighborNodeIndexes)
             {
-                Gizmos.DrawLine(node.position, neighbourNodePosition);
+                Gizmos.DrawLine(node.position, _graph._allNodes[neighbourNode].position);
             }
         }
     }
