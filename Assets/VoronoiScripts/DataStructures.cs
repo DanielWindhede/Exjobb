@@ -25,8 +25,6 @@ public class Triangle
     /// <summary>
     /// Returns true if the given point is within the triangel's circumcircel
     /// </summary>
-    /// <param name="point"></param>
-    /// <returns></returns>
     public bool IsPointWithinCircumference(Vector2 point)
     {
         return (point - Center).sqrMagnitude < Radius * Radius;

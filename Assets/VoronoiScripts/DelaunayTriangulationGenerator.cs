@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class DelaunayTriangulationGenerator : MonoBehaviour
 {
-    private static List<Triangle> tempTriangles = new List<Triangle>();
-
     public static List<Triangle> GenerateDelaunayTriangulatedGraph(int pointAmount, Vector2 bounds)
     {
         List<Vector2> points = GeneratePoints(pointAmount, bounds);
@@ -23,9 +21,7 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
                 triangulation.RemoveAt(i);
         }
 
-        tempTriangles = triangulation;
-
-        return tempTriangles;
+        return triangulation;
     }
 
     public static List<Vector2> GeneratePoints(int pointAmount, Vector2 bounds)
@@ -68,7 +64,6 @@ public class DelaunayTriangulationGenerator : MonoBehaviour
             
             foreach (Triangle triangle in badTriangles)
                 triangulation.Remove(triangle);
-
 
             // all edges around triangulation
             HashSet<Edge> boundry = new HashSet<Edge>();

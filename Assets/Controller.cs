@@ -39,10 +39,10 @@ public class Controller : MonoBehaviour
         VoronoiGraph voronoiGraph = VoronoiDiagramGenerator.GenerateVoronoiFromDelaunay(triangulation);
         _displayGraph.Display(voronoiGraph);
 
-        //if (_useManualPoints)
-        //{
-        //    CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_manualPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
-        //    _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
-        //}
+        if (_useManualPoints)
+        {
+            CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_manualPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
+            _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
+        }
     }
 }
