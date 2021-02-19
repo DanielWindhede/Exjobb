@@ -1,12 +1,18 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class Triangle
 {
     public Vector2[] vertices;
+    public Edge[] edges;
 
     public Vector2 A { get { return vertices[0]; } }
     public Vector2 B { get { return vertices[1]; } }
     public Vector2 C { get { return vertices[2]; } }
+
+    public Edge AB { get; private set; }
+    public Edge BC { get; private set; }
+    public Edge CA { get; private set; }
 
     public Vector2 Center { get; private set; }
     public float Radius { get; private set; }
@@ -20,6 +26,17 @@ public class Triangle
         this.vertices = new Vector2[]
         {
             a, b, c
+        };
+
+        AB = new Edge(A, B);
+        BC = new Edge(B, C);
+        CA = new Edge(C, A);
+
+        this.edges = new Edge[]
+        {
+            AB,
+            BC,
+            CA
         };
 
         // Can be optimized:)
@@ -39,6 +56,19 @@ public class Triangle
             for (int i = 0; i < triangle.vertices.Length; i++)
             {
                 if (vertex == triangle.vertices[i])
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public bool SharesAnyEdge(Triangle triangle)
+    {
+        foreach (Edge edge in edges)
+        {
+            for (int i = 0; i < triangle.edges.Length; i++)
+            {
+                if (edge.Equals(triangle.edges[i]))
                     return true;
             }
         }
@@ -74,5 +104,33 @@ public class Edge
     {
         int hCode = (int)Point1.x ^ (int)Point1.y ^ (int)Point2.x ^ (int)Point2.y;
         return hCode.GetHashCode();
+    }
+}
+
+[System.Serializable]
+public class Graph
+{
+    public List<Node> _allNodes = new List<Node>();
+
+    public Graph(List<Node> nodes)
+    {
+        _allNodes = nodes;
+    }
+}
+
+[System.Serializable]
+public class Node
+{
+    public Vector2 position;
+    public List<Node> neighborNodes = new List<Node>();
+
+    public Node(Vector2 position)
+    {
+        this.position = position;
+    }
+
+    public void AddNeighbour(Node newNeighbour)
+    {
+        neighborNodes.Add(newNeighbour);
     }
 }
