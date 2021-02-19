@@ -14,8 +14,19 @@ public class Triangle
     public Edge BC { get { return edges[1]; } }
     public Edge CA { get { return edges[2]; } }
 
+    /// <summary>
+    /// The circumcenter position of the triangel
+    /// </summary>
     public Vector2 Center { get; private set; }
+    /// <summary>
+    /// Radius of the triangel's circumencircel
+    /// </summary>
     public float Radius { get; private set; }
+    /// <summary>
+    /// Returns true if the given point is within the triangel's circumcircel
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
     public bool IsPointWithinCircumference(Vector2 point)
     {
         return (point - Center).sqrMagnitude < Radius * Radius;
@@ -112,10 +123,19 @@ public class VoronoiGraph
     }
 }
 
+/// <summary>
+/// Used in a graph (Voronoi graph), hold node position and neighbour nodes positions
+/// </summary>
 [System.Serializable]
 public class GraphNode
 {
+    /// <summary>
+    /// This node's position
+    /// </summary>
     public Vector2 position;
+    /// <summary>
+    /// Positions of neighbouring nodes
+    /// </summary>
     public List<Vector2> neighborNodePositions = new List<Vector2>();
 
     public GraphNode(Vector2 position)
