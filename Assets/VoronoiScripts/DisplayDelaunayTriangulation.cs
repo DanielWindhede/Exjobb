@@ -56,7 +56,7 @@ public class DisplayDelaunayTriangulation : MonoBehaviour
         Gizmos.color = _superTriangleColors;
         if (true)
         {
-            Gizmos.DrawLine(Vector3.zero, Vector2.up * _bounds.y);
+            Gizmos.DrawLine(Vector3.up, Vector2.up * _bounds.y);
             Gizmos.DrawLine(Vector3.zero, Vector2.right * _bounds.x);
             Gizmos.DrawLine(Vector2.right * _bounds.x, Vector2.one * _bounds);
             Gizmos.DrawLine(Vector2.up * _bounds.y, Vector2.one * _bounds);

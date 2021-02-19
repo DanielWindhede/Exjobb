@@ -159,7 +159,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.09411765, g: 0.09411765, b: 0.09411765, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -200,7 +200,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192209674}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 1, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -406,22 +406,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
-      propertyPath: _minCurve
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
-      propertyPath: _manualPoints.Array.data[5].x
-      value: -0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
-      propertyPath: _manualPoints.Array.data[5].y
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
-      propertyPath: _pointAmount
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _bounds.x
       value: 2
       objectReference: {fileID: 0}
@@ -429,33 +413,21 @@ PrefabInstance:
       propertyPath: _bounds.y
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _pointAmount
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 7311257194510682409, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: m_Name
       value: Controller
       objectReference: {fileID: 0}
     - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
-      propertyPath: _use
+      propertyPath: _showCircles
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _showSuperTriangles
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
-      propertyPath: _showCircles
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
-      propertyPath: _circleCenterRadius1
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 8899208410802663115, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
-      propertyPath: _circleCenterRadius2
-      value: 0.005
-      objectReference: {fileID: 0}
-    - target: {fileID: 9000754081786110718, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
-      propertyPath: m_Mesh
-      value: 
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}

@@ -10,9 +10,9 @@ public class Triangle
     public Vector2 B { get { return vertices[1]; } }
     public Vector2 C { get { return vertices[2]; } }
 
-    public Edge AB { get; private set; }
-    public Edge BC { get; private set; }
-    public Edge CA { get; private set; }
+    public Edge AB { get { return edges[0]; } }
+    public Edge BC { get { return edges[1]; } }
+    public Edge CA { get { return edges[2]; } }
 
     public Vector2 Center { get; private set; }
     public float Radius { get; private set; }
@@ -23,21 +23,8 @@ public class Triangle
 
     public Triangle(Vector2 a, Vector2 b, Vector2 c)
     {
-        this.vertices = new Vector2[]
-        {
-            a, b, c
-        };
-
-        AB = new Edge(A, B);
-        BC = new Edge(B, C);
-        CA = new Edge(C, A);
-
-        this.edges = new Edge[]
-        {
-            AB,
-            BC,
-            CA
-        };
+        this.vertices = new Vector2[] { a, b, c };
+        this.edges = new Edge[] { new Edge(A, B), new Edge(B, C), new Edge(C, A) };
 
         // Can be optimized:)
         float alpha = ((B - C).sqrMagnitude * Vector3.Dot(A - B, A - C)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
@@ -45,10 +32,12 @@ public class Triangle
         float gamma = ((A - B).sqrMagnitude * Vector3.Dot(C - A, C - B)) / (2f * Vector3.Cross(A - B, B - C).sqrMagnitude);
 
         Center = alpha * A + beta * B + gamma * C;
-
         Radius = ((A - B).magnitude * (B - C).magnitude * (C - A).magnitude) / (2f * Vector3.Cross(A - B, B - C).magnitude);
     }
 
+    /// <summary>
+    /// Return true if triangles share any vertex
+    /// </summary>
     public bool SharesAnyVertex(Triangle triangle)
     {
         foreach (Vector2 vertex in vertices)
@@ -62,6 +51,9 @@ public class Triangle
         return false;
     }
 
+    /// <summary>
+    /// Returns true if triangles share any edges
+    /// </summary>
     public bool SharesAnyEdge(Triangle triangle)
     {
         foreach (Edge edge in edges)

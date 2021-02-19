@@ -45,7 +45,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _show: 1
   _showLines: 1
+  _showPoints: 1
   _lineColor: {r: 0, g: 1, b: 0, a: 1}
+  _pointColor1: {r: 0, g: 0, b: 0, a: 1}
+  _pointColor2: {r: 1, g: 0, b: 0, a: 1}
+  _pointRadius1: 0.01
+  _pointRadius2: 0.005
 --- !u!1 &4378289885218588742
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,9 +104,9 @@ MonoBehaviour:
   _superTriangleColors: {r: 0.80030656, g: 1, b: 0, a: 1}
   _circleCenterColor1: {r: 0, g: 0, b: 0, a: 1}
   _circleCenterColor2: {r: 1, g: 1, b: 1, a: 1}
-  _showCircles: 0
+  _showCircles: 1
   _showTriangles: 1
-  _showSuperTriangles: 0
+  _showSuperTriangles: 1
   _showCircleCenters: 1
 --- !u!1 &7311257194510682409
 GameObject:
@@ -149,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfbceaafab088149887af390c0e9530, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pointAmount: 100
+  _pointAmount: 25
   _bounds: {x: 2, y: 2}
   _seed: 0
   _useManualPoints: 1

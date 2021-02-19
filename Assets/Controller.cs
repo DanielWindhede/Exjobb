@@ -43,6 +43,6 @@ public class Controller : MonoBehaviour
         //{
         //    CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_manualPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
         //    _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
-        //}      
+        //}
     }
 }
