@@ -111,13 +111,20 @@ public class Edge
 [System.Serializable]
 public class VoronoiGraph
 {
-    public List<GraphNode> _allNodes = new List<GraphNode>();
+    List<GraphNode> _allNodes = new List<GraphNode>();
     public HashSet<Vector2> _allPoints = new HashSet<Vector2>();
+
+    public int AllNodesCount { get { return _allNodes.Count; } }
 
     public VoronoiGraph(List<GraphNode> nodes, HashSet<Vector2> allPoints)
     {
         _allNodes = nodes;
         _allPoints = allPoints;
+    }
+
+    public GraphNode GetGraphNodeByIndex(int index)
+    {
+        return _allNodes[index];
     }
 }
 
@@ -125,7 +132,7 @@ public class VoronoiGraph
 /// Used in a graph (Voronoi graph), hold node position and neighbour nodes positions
 /// </summary>
 [System.Serializable]
-public class GraphNode
+public struct GraphNode
 {
     /// <summary>
     /// This node's position
@@ -134,11 +141,12 @@ public class GraphNode
     /// <summary>
     /// Positions of neighbouring nodes
     /// </summary>
-    public List<int> neighborNodeIndexes = new List<int>();
+    public List<int> neighborNodeIndexes;
 
     public GraphNode(Vector2 position)
     {
         this.position = position;
+        neighborNodeIndexes = new List<int>();
     }
 
     public void AddNeighbourPosition(int newNeighbour)

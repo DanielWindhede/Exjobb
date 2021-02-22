@@ -9,8 +9,10 @@ public class VoronoiDiagramGenerator
     /// </summary>
     /// <param name="triangulation">List of all triangles in Delaunay triangulation</param>
     /// <returns>A traversable graph with points</returns>
-    public static VoronoiGraph GenerateVoronoiFromDelaunay(List<Triangle> triangulation)
+    public static VoronoiGraph GenerateVoronoiFromDelaunay(List<Triangle> triangulation, Vector2 bounds)
     {
+        RemoveTrianglesOutsideOfBounds(bounds, ref triangulation);
+
         List<GraphNode> allNodes = new List<GraphNode>();
         HashSet<Vector2> allPoints = new HashSet<Vector2>();
 
@@ -42,5 +44,21 @@ public class VoronoiDiagramGenerator
         }
 
         return new VoronoiGraph(allNodes, allPoints);
+    }
+
+    static void RemoveTrianglesOutsideOfBounds(Vector2 bounds, ref List<Triangle> triangulation)
+    {
+        for (int i = triangulation.Count - 1; i >= 0; i--)
+        {
+            Triangle triangle = triangulation[i];
+
+            if (triangle.Center.x > bounds.x ||
+                triangle.Center.x < 0 ||
+                triangle.Center.y > bounds.y ||
+                triangle.Center.y < 0)
+            {
+                triangulation.RemoveAt(i);
+            }
+        }
     }
 }

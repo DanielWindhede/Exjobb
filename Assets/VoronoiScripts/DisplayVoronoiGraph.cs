@@ -27,11 +27,11 @@ public class DisplayVoronoiGraph : MonoBehaviour
     {
         Gizmos.color = _lineColor;
 
-        foreach (GraphNode node in _graph._allNodes)
+        for (int i = 0; i < _graph.AllNodesCount; i++)
         {
-            foreach (int neighbourNode in node.neighborNodeIndexes)
+            foreach (int neighbourNode in _graph.GetGraphNodeByIndex(i).neighborNodeIndexes)
             {
-                Gizmos.DrawLine(node.position, _graph._allNodes[neighbourNode].position);
+                Gizmos.DrawLine(_graph.GetGraphNodeByIndex(i).position, _graph.GetGraphNodeByIndex(neighbourNode).position);
             }
         }
     }
