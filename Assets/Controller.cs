@@ -17,6 +17,8 @@ public class Controller : MonoBehaviour
     [SerializeField] bool _autoCurve = true;
     [SerializeField] float _minCurve = 0.0f;
     [SerializeField] float _maxCurve = 2.0f;
+    [SerializeField] float _maxControlPointLength = 1.0f;
+    [SerializeField] float _autoCurveWeigth = 0.25f;
     [SerializeField] float _curvatureScale = 0.035f;
 
     DisplayCurve _displayCurveScript;
@@ -44,11 +46,9 @@ public class Controller : MonoBehaviour
         List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, 0, 0);
         _displayPathing.Display(path);
 
+        path = _useManualPoints ? _manualPoints : path;
+        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(path, _minCurve, _maxCurve, _autoCurveWeigth, _autoCurve);
 
-        if (_useManualPoints)
-        {
-            CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(_manualPoints, _curvatureScale, _minCurve, _maxCurve, _autoCurve);
-            _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints));
-        }
+        _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints, _maxControlPointLength));
     }
 }

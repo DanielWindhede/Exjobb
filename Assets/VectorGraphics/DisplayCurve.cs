@@ -6,6 +6,7 @@ public class DisplayCurve : MonoBehaviour
 {
     [Header("Options")]
 
+    [SerializeField] bool _showFinishedProduct = true;
     [SerializeField, Range(0, 180)] float _minTurnAngle = 15f;
     [SerializeField, Range(0.001f, 100f)] float _size = 1.0f;
     [SerializeField] Color _color = Color.white;
@@ -16,6 +17,20 @@ public class DisplayCurve : MonoBehaviour
     [SerializeField] GameObject _turnPrefab;
     [SerializeField] GameObject _arrowPrefab;
     [SerializeField] GameObject _finishLinePrefab;
+
+    [Header("Debug Display Options")]
+
+    [SerializeField] bool _use = true;
+    [SerializeField] bool _showPoints = true;
+    [SerializeField] bool _showControlPoints = true;
+    [SerializeField] bool _showBezierCurve = true;
+    [SerializeField] Color _pointColor = Color.black;
+    [SerializeField] Color _controlPointColor = Color.red;
+    [SerializeField] Color _controlPointLineColor = Color.black;
+    [SerializeField] Color _bezierCurveColor = Color.cyan;
+    [SerializeField] float _pointRadius = 0.005f;
+    [SerializeField] float _controlPointRadius = 0.0025f;
+    [SerializeField] float _bezierCurveWidth = 0.005f;
 
     [Header("TessellationOptions")]
 
@@ -29,6 +44,8 @@ public class DisplayCurve : MonoBehaviour
     VectorUtils.TessellationOptions _options;
     Mesh _mesh;
 
+    BezierPathSegment[] _points;
+
     private void OnEnable()
     {
         SetupOptions();
@@ -41,16 +58,21 @@ public class DisplayCurve : MonoBehaviour
     /// <param name="points">Line segments</param>
     public void SetupCurve(BezierPathSegment[] points)
     {
-        _path = new Shape()
+        _points = points;
+
+        if (_showFinishedProduct)
         {
-            Contours = new BezierContour[] { new BezierContour() { Segments = points } },
-            PathProps = new PathProperties() { Stroke = new Stroke() { Color = _color, HalfThickness = _thickness } }
-        };
+            _path = new Shape()
+            {
+                Contours = new BezierContour[] { new BezierContour() { Segments = points } },
+                PathProps = new PathProperties() { Stroke = new Stroke() { Color = _color, HalfThickness = _thickness } }
+            };
 
-        _scene = new Scene() { Root = new SceneNode() { Shapes = new List<Shape> { _path } } };
+            _scene = new Scene() { Root = new SceneNode() { Shapes = new List<Shape> { _path } } };
 
-        SetupSpawnables();
-        Display();
+            SetupSpawnables();
+            Display();
+        } 
     }
 
     #region Setup
@@ -123,5 +145,49 @@ public class DisplayCurve : MonoBehaviour
     {
         List<VectorUtils.Geometry> geometries = VectorUtils.TessellateScene(_scene, _options);
         VectorUtils.FillMesh(_mesh, geometries, _size);
+    }
+
+    void DisplayPoints()
+    {
+        UnityEditor.Handles.color = _pointColor;
+
+        foreach (BezierPathSegment segment in _points)
+            UnityEditor.Handles.DrawSolidDisc(segment.P0, Vector3.back, _pointRadius);
+    }
+
+    void DisplayControlPoints()
+    {
+        for (int i = 0; i < _points.Length; i++)
+        {
+            UnityEditor.Handles.color = _controlPointColor;
+
+            UnityEditor.Handles.DrawSolidDisc(_points[i].P1, Vector3.back, _controlPointRadius);
+            UnityEditor.Handles.DrawSolidDisc(_points[i].P2, Vector3.back, _controlPointRadius);
+
+            Gizmos.color = _controlPointLineColor;
+
+            Gizmos.DrawLine(_points[i].P0, _points[i].P1);
+            if (i + 1 < _points.Length)
+                Gizmos.DrawLine(_points[i].P2, _points[i + 1].P0);
+        }
+    }
+
+    void DisplayBezierCurve()
+    {
+        for (int i = 0; i < _points.Length - 1; i++)
+            UnityEditor.Handles.DrawBezier(_points[i].P0, _points[i + 1].P0, _points[i].P1, _points[i].P2, _bezierCurveColor, null, _bezierCurveWidth);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_points != null && _use)
+        {
+            if (_showPoints)
+                DisplayPoints();
+            if (_showControlPoints)
+                DisplayControlPoints();
+            if (_showBezierCurve)
+                DisplayBezierCurve();
+        }
     }
 }

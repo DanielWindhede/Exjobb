@@ -14,7 +14,7 @@ public class Pathing
 
 
         int testCount = 0;
-        int testLimit = 25;
+        int testLimit = 16;
 
         while (testCount < testLimit)
         {

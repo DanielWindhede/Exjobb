@@ -10,7 +10,7 @@ public class BezierCurve
     /// <param name="points">ordered set of points to create a line</param>
     /// <param name="curveAmount">How much the curve should curve</param>
     /// <returns></returns>
-    public static BezierPathSegment[] ConstructBezierCurve(CurvaturePoint[] points)
+    public static BezierPathSegment[] ConstructBezierCurve(CurvaturePoint[] points, float maxControlPointLength)
     {
         BezierPathSegment[] path = new BezierPathSegment[points.Length];
 
@@ -20,10 +20,10 @@ public class BezierCurve
             //Set the actual point
             path[i].P0 = points[i].point;
             //Outgoing control point from actual point
-            path[i].P1 = CalculateControlPoint(i, true, points[i].curveAmount, points);
+            path[i].P1 = CalculateControlPoint(i, true, points[i].curveAmount, maxControlPointLength, points);
             //In going control point to next point
             int nextPointIndex = Utility.Modulo(i + 1, points.Length - 1);
-            path[i].P2 = CalculateControlPoint(nextPointIndex, false, points[nextPointIndex].curveAmount, points);
+            path[i].P2 = CalculateControlPoint(nextPointIndex, false, points[nextPointIndex].curveAmount, maxControlPointLength, points);
         }
 
         return path;
@@ -35,17 +35,24 @@ public class BezierCurve
     /// <param name="pointIndex">Reference middle point index</param>
     /// <param name="forward">Should the direction point along the points direction?</param>
     /// <param name="points">The points</param>
-    static Vector2 CalculateControlPoint(int pointIndex, bool forward, float curveAmount, CurvaturePoint[] points)
+    static Vector2 CalculateControlPoint(int pointIndex, bool forward, float curveAmount, float maxControlPointLength, CurvaturePoint[] points)
     {
         int prePoint = Utility.Modulo(pointIndex - 1, points.Length - 1);
         int nextPoint = Utility.Modulo(pointIndex + 1, points.Length - 1);
-        //Pointing toward next point
-        Vector2 direction = (points[nextPoint].point - points[prePoint].point).normalized;
-        //Reverse if looking backward
-        direction *= forward ? 1 : -1;
-        Vector2 controlPointPosition = points[pointIndex].point + direction * curveAmount;
 
-        return controlPointPosition;
+        Vector2 toPre = points[prePoint].point - points[pointIndex].point;
+        Vector2 toNext = points[nextPoint].point - points[pointIndex].point;
+
+        Vector2 controlPointDirection = toNext.normalized - toPre.normalized;
+        controlPointDirection *= forward ? 1 : -1;
+
+        Vector2 controlPoint = controlPointDirection.normalized * (forward ? toNext.magnitude / 2f : toPre.magnitude / 2f);
+        controlPoint *= points[pointIndex].curveAmount;
+
+        if (controlPoint.magnitude > maxControlPointLength)
+            controlPoint = controlPoint.normalized * maxControlPointLength;
+
+        return points[pointIndex].point + controlPoint;
     }
 }
 
