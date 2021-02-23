@@ -140,10 +140,6 @@ public class Pathing
         VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount));
         float preferredLength = Random.Range(minLength, maxLength);
 
-
-        int testCount = 0;
-        int testLimit = 16;
-
         while (true)
         {
             path.UpdateCurrentPoint();
@@ -152,7 +148,6 @@ public class Pathing
             {
                 path.AddPointFromNeighbour();
                 path.UpdateLongestPath();
-                testCount++;
             }
             //Path can't proceed further -> back-track
             else
@@ -164,7 +159,6 @@ public class Pathing
                 }
 
                 path.BackPathOneStep();
-                testCount--;
             }
 
             //Time to try and close
