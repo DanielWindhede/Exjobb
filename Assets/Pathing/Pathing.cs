@@ -170,7 +170,6 @@ public class VoronoiPath
 
 public class Pathing
 {
-    static GameObject g;
     public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float maxLength, float minLength)
     {
         VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount));
