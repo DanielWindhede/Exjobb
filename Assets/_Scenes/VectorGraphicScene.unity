@@ -411,15 +411,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _seed
-      value: 227
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _pointAmount
-      value: 200
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _minCurve
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7311257194510682409, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: m_Name
       value: Controller
+      objectReference: {fileID: 0}
+    - target: {fileID: 8880874960588151616, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _show
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8880874960588151616, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _showPoints
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9000754081786110719, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _showFinishedProduct
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9000754081786110719, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _showControlPoints
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9000754081786110719, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _use
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
