@@ -133,6 +133,7 @@ public class VoronoiPath
     public bool DoesHypotheticalCircuitIntersect(out int amount)
     {
         amount = 0;
+        //Hypothetical circuit closing line to check against
         Vector2 p1 = _voronoiGraph.GetGraphNodeByIndex(_path[0]).position;
         Vector2 p2 = _voronoiGraph.GetGraphNodeByIndex(_path[_path.Count - 1]).position;
 
