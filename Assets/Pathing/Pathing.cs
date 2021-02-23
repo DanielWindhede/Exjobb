@@ -135,6 +135,7 @@ public class VoronoiPath
 
 public class Pathing
 {
+    static GameObject g;
     public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float maxLength, float minLength)
     {
         VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount));
@@ -168,27 +169,16 @@ public class Pathing
             }
         }
 
-        /*
         Vector2 p1 = voronoiGraph.GetGraphNodeByIndex(path._path[path._path.Count - 1]).position;
         Vector2 p2 = voronoiGraph.GetGraphNodeByIndex(path._path[0]).position;
-        */
-        Vector2 p1 = voronoiGraph.GetGraphNodeByIndex(path._path[path._path.Count - 1]).position;
-        Vector2 p2 = voronoiGraph.GetGraphNodeByIndex(path._path[0]).position;
-
-        GameObject.Instantiate(new GameObject("p1"), p1, Quaternion.identity);
-        GameObject.Instantiate(new GameObject("p2"), p2, Quaternion.identity);
-
-        Debug.Log("P1: " + p1 + ", P2: " + p2);
 
         float t = 0;
         float u = 0;
-        for (int i = path._path.Count - 1; i >= 1; i--)
+
+        for (int i = path._path.Count - 2; i >= 3; i--)
         {
             Vector2 p3 = voronoiGraph.GetGraphNodeByIndex(path._path[i]).position;
             Vector2 p4 = voronoiGraph.GetGraphNodeByIndex(path._path[i - 1]).position;
-
-            GameObject.Instantiate(new GameObject("p3 variation " + i), p3, Quaternion.identity);
-            GameObject.Instantiate(new GameObject("p4 variation " + i), p4, Quaternion.identity);
 
             t = (p1.x - p3.x) * (p3.y - p4.y) - (p1.y - p3.y) * (p3.x - p4.x);
             t /= (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
@@ -198,25 +188,13 @@ public class Pathing
 
             if (0 <= t && t <= 1 && 0 <= u && u <= 1)
             {
-                Debug.Log("t: " + t + ", u: " + u);
-                Vector2 point1 = new Vector2(p1.x + t * (p2.x - p1.x), p1.y + t * (p2.y - p1.y));
-                Debug.Log("p1: " + p1 + "p2: " + p2 + "p3: " + p3 + "p4: " + p4 + "Intersection Point: " + point1);
-                Vector2 point2 = new Vector2(p3.x + u * (p4.x - p3.x), p3.y + t * (p4.y - p3.y));
-                Debug.Log("p1: " + p1 + "p2: " + p2 + "p3: " + p3 + "p4: " + p4 + "Intersection Point: " + point2);
-
+                Debug.LogWarning("INTERSECTION!!!!!!!");
                 /*
-                if (0 <= t && t <= 1)
-                {
-                    Debug.Log("Intersection at line1: " + t);
-                    Vector2 point = new Vector2(p1.x + t * (p2.x - p1.x), p1.y + t * (p2.y - p1.y));
-                    Debug.Log("p1: " + p1 + "p2: " + p2 + "p3: " + p3 + "p4: " + p4 + "Intersection Point: " + point);
-                }
-                if (0 <= u && u <= 1)
-                {
-                    Debug.Log("Intersection at line2 : " + u);
-                    Vector2 point = new Vector2(p3.x + u * (p4.x - p3.x), p3.y + t * (p4.y - p3.y));
-                    Debug.Log("p1: " + p1 + "p2: " + p2 + "p3: " + p3 + "p4: " + p4 + "Intersection Point: " + point);
-                }
+                g = new GameObject("p3 variation " + i);
+                g.transform.position = p3;
+                
+                g = new GameObject("p4 variation " + i);
+                g.transform.position = p4;
                 */
             }
         }
