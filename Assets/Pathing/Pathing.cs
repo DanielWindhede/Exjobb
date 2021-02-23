@@ -17,7 +17,7 @@ public class VoronoiPath
     /// <summary>
     /// The current path
     /// </summary>
-    public List<int> _path = new List<int>(); // TODO TA BORT
+    private List<int> _path = new List<int>();
     /// <summary>
     /// The longest path that has been attempted so far
     /// </summary>
@@ -96,6 +96,9 @@ public class VoronoiPath
         CurrentLength += DistanceBetweenTwoPoints(_path.Count - 1, _path.Count - 2);
     }
 
+    /// <summary>
+    /// Connects last point to first point and creates a circuit. Might be intersecting, check that first
+    /// </summary>
     public void ConnectCircuit()
     {
         _path.Add(_path[0]);
@@ -120,6 +123,37 @@ public class VoronoiPath
 
         CurrentIndex = _path[_path.Count - 1];
         _path.RemoveAt(_path.Count - 1);
+    }
+
+    /// <summary>
+    /// Checks if the closing of the circuit from this position would make intersections. If it does -> how many?
+    /// </summary>
+    /// <param name="amount">How many intersections were made in trying to close the circuit</param>
+    /// <returns>True if circuit intersects</returns>
+    public bool DoesHypotheticalCircuitIntersect(out int amount)
+    {
+        amount = 0;
+        Vector2 p1 = _voronoiGraph.GetGraphNodeByIndex(_path[0]).position;
+        Vector2 p2 = _voronoiGraph.GetGraphNodeByIndex(_path[_path.Count - 1]).position;
+
+        for (int i = _path.Count - 2; i >= 3; i--)
+        {
+            //Points in line to check against 
+            Vector2 p3 = _voronoiGraph.GetGraphNodeByIndex(_path[i]).position;
+            Vector2 p4 = _voronoiGraph.GetGraphNodeByIndex(_path[i - 1]).position;
+
+            float t = (p2.x - p3.x) * (p3.y - p4.y) - (p2.y - p3.y) * (p3.x - p4.x);
+            t /= (p2.x - p1.x) * (p3.y - p4.y) - (p2.y - p1.y) * (p3.x - p4.x);
+
+            float u = (p1.x - p2.x) * (p2.y - p3.y) - (p1.y - p2.y) * (p2.x - p3.x);
+            u /= (p2.x - p1.x) * (p3.y - p4.y) - (p2.y - p1.y) * (p3.x - p4.x);
+
+            //Line intersect
+            if (0 <= t && t <= 1 && 0 <= u && u <= 1)
+                amount++;
+        }
+
+        return amount > 0;
     }
 
     public void SetLongestPathToPath()
@@ -165,37 +199,8 @@ public class Pathing
             //Time to try and close
             if (path.HypothecialCircuitLength > preferredLength)
             {
-
-            }
-        }
-
-        Vector2 p1 = voronoiGraph.GetGraphNodeByIndex(path._path[path._path.Count - 1]).position;
-        Vector2 p2 = voronoiGraph.GetGraphNodeByIndex(path._path[0]).position;
-
-        float t = 0;
-        float u = 0;
-
-        for (int i = path._path.Count - 2; i >= 3; i--)
-        {
-            Vector2 p3 = voronoiGraph.GetGraphNodeByIndex(path._path[i]).position;
-            Vector2 p4 = voronoiGraph.GetGraphNodeByIndex(path._path[i - 1]).position;
-
-            t = (p1.x - p3.x) * (p3.y - p4.y) - (p1.y - p3.y) * (p3.x - p4.x);
-            t /= (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
-
-            u = (p2.x - p1.x) * (p1.y - p3.y) - (p2.y - p1.y) * (p1.x - p3.x);
-            u /= (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
-
-            if (0 <= t && t <= 1 && 0 <= u && u <= 1)
-            {
-                Debug.LogWarning("INTERSECTION!!!!!!!");
-                /*
-                g = new GameObject("p3 variation " + i);
-                g.transform.position = p3;
-                
-                g = new GameObject("p4 variation " + i);
-                g.transform.position = p4;
-                */
+                path.DoesHypotheticalCircuitIntersect(out int amount);
+                Debug.Log("Intersect: " + (amount > 0) + ", " + amount + " times");
             }
         }
 
@@ -204,66 +209,3 @@ public class Pathing
         return path.PathInPoints;
     }
 }
-
-
-
-
-
-/*
-public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float maxLength, float minLength)
-    {
-        VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount));
-        //HashSet<int> illegalPoints = new HashSet<int>();
-        //List<int> path = new List<int>();
-        //List<int> longestPath = new List<int>();
-        //int currentIndex = Random.Range(0, voronoiGraph.AllNodesCount);
-        float preferredLength = Random.Range(minLength, maxLength);
-
-
-        int testCount = 0;
-        int testLimit = 16;
-
-        while (testCount < testLimit)
-        {
-            //illegalPoints.Add(currentIndex);
-            //List<int> neighbourIndexes = new List<int>(voronoiGraph.GetGraphNodeByIndex(currentIndex).neighborNodeIndexes);
-
-            //foreach (int index in illegalPoints)
-            //    neighbourIndexes.Remove(index);
-
-            //Path can't proceed further -> back-track
-            //if (neighbourIndexes.Count == 0)
-            //{
-                //if (path.Count == 0)
-                //{
-                //    path = longestPath;
-                //    break;
-                //}
-
-                //currentIndex = path[path.Count - 1];
-                //path.RemoveAt(path.Count - 1);
-
-                //testCount--;
-            //}
-            //Valid point! (for now UmU)
-            //else
-            //{
-                //path.Add(currentIndex);
-
-                //if (longestPath.Count < path.Count)
-                //    longestPath = new List<int>(path);
-
-                //currentIndex = neighbourIndexes[Random.Range(0, neighbourIndexes.Count)];
-                //testCount++;
-            //}
-        }
-
-        List<Vector2> pathPositions = new List<Vector2>();
-        for (int i = 0; i < path.Count; i++)
-            pathPositions.Add(voronoiGraph.GetGraphNodeByIndex(path[i]).position);
-
-        pathPositions.Add(pathPositions[0]);
-
-        return pathPositions;
-    }
-*/

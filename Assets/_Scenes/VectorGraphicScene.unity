@@ -421,6 +421,14 @@ PrefabInstance:
       propertyPath: _minCurve
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _minCircuitLength
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _maxCircuitLength
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7311257194510682409, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: m_Name
       value: Controller
