@@ -36,6 +36,8 @@ public class Controller : MonoBehaviour
     private DisplayVoronoiGraph _displayGraph;
     private DisplayPathing _displayPathing;
 
+    private CircuitInformation _circuitInformation;
+
     private void Awake()
     {
         _displayCurveScript = GetComponentInChildren<DisplayCurve>();
@@ -58,8 +60,8 @@ public class Controller : MonoBehaviour
         VoronoiGraph voronoiGraph = VoronoiDiagramGenerator.GenerateVoronoiFromDelaunay(triangulation, _bounds);
         _displayGraph.Display(voronoiGraph);
 
-        int recursionCounter = 0; 
-        List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, _minCircuitLength, _maxCircuitLength, _maxStraightLength, ref recursionCounter);
+        int recursionCounter = 0;
+        List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, _minCircuitLength, _maxCircuitLength, _maxStraightLength, ref recursionCounter, ref _circuitInformation);
         _displayPathing.Display(path);
 
         path = _useManualPoints ? _manualPoints : path;

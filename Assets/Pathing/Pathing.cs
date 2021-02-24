@@ -91,8 +91,8 @@ public class VoronoiPath
         //Remove neighbours which edge length is > than maxStraightLength
         for (int i = _currentNeighbours.Count - 1; i >= 0; i--)
         {
-                if (DistanceBetweenTwoPoints(CurrentIndex, _currentNeighbours[i]) > _maxStraightLength)
-                    _currentNeighbours.RemoveAt(i);
+            if (DistanceBetweenTwoPoints(CurrentIndex, _currentNeighbours[i]) > _maxStraightLength)
+                _currentNeighbours.RemoveAt(i);
         }
     }
 
@@ -186,6 +186,22 @@ public class VoronoiPath
     }
 }
 
+public struct CircuitInformation
+{
+    public float circuitLength;
+    public float closingStraightLength;
+    public int turnAmount;
+    public float preferredCircuitLength;
+
+    public CircuitInformation(float circuitLength, float closingStraightLength, int turnAmount, float preferredCircuitLength)
+    {
+        this.circuitLength = circuitLength;
+        this.closingStraightLength = closingStraightLength;
+        this.turnAmount = turnAmount;
+        this.preferredCircuitLength = preferredCircuitLength;
+    }
+}
+
 public class Pathing
 {
     /// <summary>
@@ -195,7 +211,7 @@ public class Pathing
     /// <param name="minLength">The minimum circuit length that is valid</param>
     /// <param name="maxLength">The maxiumum circuit length that is valid</param>
     /// <returns>An ordered list of points making up the circuit</returns>
-    public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float minLength, float maxLength, float maxStraightLength, ref int recursionCounter)
+    public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float minLength, float maxLength, float maxStraightLength, ref int recursionCounter, ref CircuitInformation circuitInformation)
     {
         VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount), maxStraightLength);
         float preferredLength = Random.Range(minLength, maxLength);
@@ -241,10 +257,10 @@ public class Pathing
             if (recursionCounter > 5)
                 throw new System.Exception("Keep failing finding a valid circuit! Probably odd parameters!!!");
             recursionCounter++;
-            return GenerateRandomCircuit(voronoiGraph, minLength, maxLength, maxStraightLength, ref recursionCounter);
+            return GenerateRandomCircuit(voronoiGraph, minLength, maxLength, maxStraightLength, ref recursionCounter, ref circuitInformation);
         }
 
-        Debug.Log("Actual:" + path.HypothecialCircuitLength + ", preferred: " + preferredLength + ", Closing straight length: " + path.ClosingStraightLength);
+        circuitInformation = new CircuitInformation(path.HypothecialCircuitLength, path.ClosingStraightLength, path.PathInPoints.Count - 1, preferredLength);
 
         path.ConnectCircuit();
 
