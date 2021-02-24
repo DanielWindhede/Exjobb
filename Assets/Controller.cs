@@ -1,9 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
+    public int Seed 
+    { 
+        get { return _seed; } 
+        set { _seed = value; }
+    }
+
     [Header("Delaunay Triangulation Settings")]
 
     [SerializeField] private int _pointAmount;
@@ -24,10 +31,10 @@ public class Controller : MonoBehaviour
     [SerializeField] float _autoCurveWeigth = 0.25f;
     [SerializeField] float _curvatureScale = 0.035f;
 
-    DisplayCurve _displayCurveScript;
-    DisplayDelaunayTriangulation _displayDelaunayTriangulation;
-    DisplayVoronoiGraph _displayGraph;
-    DisplayPathing _displayPathing;
+    private DisplayCurve _displayCurveScript;
+    private DisplayDelaunayTriangulation _displayDelaunayTriangulation;
+    private DisplayVoronoiGraph _displayGraph;
+    private DisplayPathing _displayPathing;
 
     private void Awake()
     {
@@ -38,6 +45,11 @@ public class Controller : MonoBehaviour
     }
 
     private void Start()
+    {
+        Refresh();
+    }
+
+    public void Refresh()
     {
         Random.InitState(_seed);
 
