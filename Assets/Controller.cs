@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
-    public int Seed 
-    { 
-        get { return _seed; } 
+    public int Seed
+    {
+        get { return _seed; }
         set { _seed = value; }
     }
 
@@ -24,6 +24,8 @@ public class Controller : MonoBehaviour
     [Header("Settings")]
 
     [SerializeField] int _seed;
+    [SerializeField] bool _centerPath = true;
+    [SerializeField] Vector2 _centerPoint = Vector2.zero;
     [SerializeField] float _minCircuitLength = 3.5f;
     [SerializeField] float _maxCircuitLength = 7.0f;
     [SerializeField] float _maxStraightLength = 2.0f;
@@ -70,8 +72,29 @@ public class Controller : MonoBehaviour
         _displayPathing.Display(path);
 
         path = _useManualPoints ? _manualPoints : path;
-        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(path, _minCurve, _maxCurve, _autoCurveWeigth, _autoCurve);
 
+        if (_centerPath)
+            CenterPath(_centerPoint, ref path);
+
+        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(path, _minCurve, _maxCurve, _autoCurveWeigth, _autoCurve);
         _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints, _maxControlPointLength));
+    }
+
+    /// <summary>
+    /// Centers the path around the centerPoint
+    /// </summary>
+    /// <param name="centerPoint">The center point in world space for the path</param>
+    /// <param name="path">The path to center</param>
+    private void CenterPath(Vector2 centerPoint, ref List<Vector2> path)
+    {
+        Vector2 center = Vector2.zero;
+        foreach (Vector2 point in path)
+            center += point;
+
+        center /= path.Count;
+        Vector2 centerOffset = center - centerPoint; 
+
+        for (int i = 0; i < path.Count; i++)
+            path[i] -= centerOffset;
     }
 }
