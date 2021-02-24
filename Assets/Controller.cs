@@ -11,6 +11,11 @@ public class Controller : MonoBehaviour
         set { _seed = value; }
     }
 
+    public CircuitInformation CircuitInformation
+    {
+        get { return _circuitInformation; }
+    }
+
     [Header("Delaunay Triangulation Settings")]
 
     [SerializeField] private int _pointAmount;

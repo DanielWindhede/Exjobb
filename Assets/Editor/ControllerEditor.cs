@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -8,8 +9,9 @@ public class ControllerEditor : Editor
 {
 	private Controller _controller { get { return (Controller)base.target; } }
 
-	private bool _autoRefresh;
-	private bool showBaseGUI;
+	private bool _autoRefresh = true;
+	private bool _showBaseGUI = false;
+	private bool _showTrackInformation = false;
 
 	public override void OnInspectorGUI()
 	{
@@ -44,9 +46,24 @@ public class ControllerEditor : Editor
 				if (_autoRefresh && EditorGUI.EndChangeCheck())
 					_controller.Refresh();
 
-				showBaseGUI = EditorGUILayout.Foldout(showBaseGUI, "Base Info", true, EditorStyles.foldout);
+				_showTrackInformation = EditorGUILayout.Foldout(_showTrackInformation, "Track information", true, EditorStyles.foldout);
+				if (_showTrackInformation)
+				{
+					var e = new GUILayout();
+					
+					EditorGUI.indentLevel = 1;
+					CircuitInformation info = _controller.CircuitInformation;
 
-				if (showBaseGUI)
+					EditorGUILayout.LabelField("Circuit length: " + Math.Round(info.circuitLength, 3) + "km", EditorStyles.boldLabel);
+					EditorGUILayout.LabelField("Preferred Circuit length: " + Math.Round(info.preferredCircuitLength, 3) + "km", EditorStyles.boldLabel);
+					EditorGUILayout.LabelField("Turn Amount: " + info.turnAmount, EditorStyles.boldLabel);
+					EditorGUILayout.LabelField("Closing Straight length: " + Math.Round(info.closingStraightLength, 3) + "km", EditorStyles.boldLabel);
+				}
+
+				EditorGUI.indentLevel = 0;
+
+				_showBaseGUI = EditorGUILayout.Foldout(_showBaseGUI, "Base Info", true, EditorStyles.foldout);
+				if (_showBaseGUI)
 				{
 					EditorGUI.indentLevel = 1;
 					base.OnInspectorGUI();
