@@ -21,7 +21,7 @@ public class VoronoiPath
     /// <summary>
     /// The longest path that has been attempted so far
     /// </summary>
-    private List<int> _longestPath = new List<int>();
+    //private List<int> _longestPath = new List<int>();
     /// <summary>
     /// Points that has been visited previously
     /// </summary>
@@ -31,12 +31,16 @@ public class VoronoiPath
     /// Neighbour indexes to current point
     /// </summary>
     private List<int> _currentNeighbours = new List<int>();
+    private float _maxStraightLength;
 
     /// <summary>
     /// There are paths from current point that can be taken
     /// </summary>
     public bool CanContinuePath { get { return _currentNeighbours.Count > 0; } }
     public bool TriedAllCases { get { return _path.Count == 0; } }
+
+    public bool IsHypotheticalCircuitStraightTooLong { get { return ClosingStraightLength > _maxStraightLength; } }
+    public float ClosingStraightLength { get { return DistanceBetweenTwoPoints(_path[_path.Count - 1], _path[0]); } }
 
     /// <summary>
     /// Returns length on circuit if path was made to circuit by connecting first and last point
@@ -46,16 +50,17 @@ public class VoronoiPath
         get
         {
             if (_path.Count > 1)
-                return CurrentLength + DistanceBetweenTwoPoints(_path.Count - 1, 0);
+                return CurrentLength + ClosingStraightLength;
             else
                 return 0;
         }
     }
 
-    public VoronoiPath(VoronoiGraph voronoiGraph, int startIndex)
+    public VoronoiPath(VoronoiGraph voronoiGraph, int startIndex, float maxStraightLength)
     {
         _voronoiGraph = voronoiGraph;
         CurrentIndex = startIndex;
+        _maxStraightLength = maxStraightLength;
     }
 
     /// <summary>
@@ -82,6 +87,13 @@ public class VoronoiPath
         _currentNeighbours = new List<int>(_voronoiGraph.GetGraphNodeByIndex(CurrentIndex).neighborNodeIndexes);
         foreach (int index in _illegalPoints)
             _currentNeighbours.Remove(index);
+
+        //Remove neighbours which edge length is > than maxStraightLength
+        for (int i = _currentNeighbours.Count - 1; i >= 0; i--)
+        {
+                if (DistanceBetweenTwoPoints(CurrentIndex, _currentNeighbours[i]) > _maxStraightLength)
+                    _currentNeighbours.RemoveAt(i);
+        }
     }
 
     /// <summary>
@@ -93,7 +105,7 @@ public class VoronoiPath
         CurrentIndex = _currentNeighbours[Random.Range(0, _currentNeighbours.Count)];
 
         if (_path.Count > 1)
-            CurrentLength += DistanceBetweenTwoPoints(_path.Count - 1, _path.Count - 2);
+            CurrentLength += DistanceBetweenTwoPoints(_path[_path.Count - 1], _path[_path.Count - 2]);
     }
 
     /// <summary>
@@ -102,14 +114,14 @@ public class VoronoiPath
     public void ConnectCircuit()
     {
         _path.Add(_path[0]);
-        CurrentLength += DistanceBetweenTwoPoints(_path.Count - 1, _path.Count - 2);
+        CurrentLength += DistanceBetweenTwoPoints(_path[_path.Count - 1], _path[_path.Count - 2]);
     }
 
-    public void UpdateLongestPath()
-    {
-        if (_longestPath.Count < _path.Count)
-            _longestPath = new List<int>(_path);
-    }
+    //public void UpdateLongestPath()
+    //{
+    //    if (_longestPath.Count < _path.Count)
+    //        _longestPath = new List<int>(_path);
+    //}
 
     /// <summary>
     /// Remove current index and step one step back in path
@@ -117,7 +129,7 @@ public class VoronoiPath
     public void BackPathOneStep()
     {
         if (_path.Count > 1)
-            CurrentLength -= DistanceBetweenTwoPoints(_path.Count - 1, _path.Count - 2);
+            CurrentLength -= DistanceBetweenTwoPoints(_path[_path.Count - 1], _path[_path.Count - 2]);
         else
             CurrentLength = 0;
 
@@ -163,14 +175,14 @@ public class VoronoiPath
         return amount > 0;
     }
 
-    public void SetLongestPathToPath()
-    {
-        _path = _longestPath;
-    }
+    //public void SetLongestPathToPath()
+    //{
+    //    _path = _longestPath;
+    //}
 
     float DistanceBetweenTwoPoints(int index1, int index2)
     {
-        return (_voronoiGraph.GetGraphNodeByIndex(_path[index1]).position - _voronoiGraph.GetGraphNodeByIndex(_path[index2]).position).magnitude;
+        return (_voronoiGraph.GetGraphNodeByIndex(index1).position - _voronoiGraph.GetGraphNodeByIndex(index2).position).magnitude;
     }
 }
 
@@ -183,10 +195,11 @@ public class Pathing
     /// <param name="minLength">The minimum circuit length that is valid</param>
     /// <param name="maxLength">The maxiumum circuit length that is valid</param>
     /// <returns>An ordered list of points making up the circuit</returns>
-    public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float minLength, float maxLength)
+    public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float minLength, float maxLength, float maxStraightLength, ref int recursionCounter)
     {
-        VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount));
+        VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount), maxStraightLength);
         float preferredLength = Random.Range(minLength, maxLength);
+        bool foundValidCircuit = true;
 
         while (true)
         {
@@ -195,7 +208,7 @@ public class Pathing
             if (path.CanContinuePath)
             {
                 path.AddPointFromNeighbour();
-                path.UpdateLongestPath();
+                //path.UpdateLongestPath();
             }
             //Path can't proceed further -> back-track
             else
@@ -203,8 +216,8 @@ public class Pathing
                 //There was a failure finding a valid circuit over the graph
                 if (path.TriedAllCases)
                 {
-                    path.SetLongestPathToPath();
-                    Debug.Log("I found no path bitch");
+                    //path.SetLongestPathToPath();
+                    foundValidCircuit = false;
                     break;
                 }
 
@@ -214,16 +227,24 @@ public class Pathing
             //Time to try and close
             if (path.HypothecialCircuitLength > preferredLength && path.HypothecialCircuitLength <= maxLength)
             {
-                Debug.Log("Actual:" + path.HypothecialCircuitLength + ", preferred: " + preferredLength);
-
                 //Closing the circuit now would not be valid
-                if (!path.DoesHypotheticalCircuitIntersect(out int amount))
+                if (!path.DoesHypotheticalCircuitIntersect(out int amount) && !path.IsHypotheticalCircuitStraightTooLong)
                     break;
             }
             //Circuit is too long
             else if (path.HypothecialCircuitLength > maxLength)
                 path.BackCompletely(minLength);
         }
+
+        if (!foundValidCircuit)
+        {
+            if (recursionCounter > 5)
+                throw new System.Exception("Keep failing finding a valid circuit! Probably odd parameters!!!");
+            recursionCounter++;
+            return GenerateRandomCircuit(voronoiGraph, minLength, maxLength, maxStraightLength, ref recursionCounter);
+        }
+
+        Debug.Log("Actual:" + path.HypothecialCircuitLength + ", preferred: " + preferredLength + ", Closing straight length: " + path.ClosingStraightLength);
 
         path.ConnectCircuit();
 

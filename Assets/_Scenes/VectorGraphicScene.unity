@@ -411,7 +411,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _seed
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _pointAmount
@@ -459,7 +459,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9000754081786110719, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _use
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9000754081786110719, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _showBezierCurve
