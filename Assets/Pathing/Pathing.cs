@@ -56,7 +56,6 @@ public class VoronoiPath
     {
         _voronoiGraph = voronoiGraph;
         CurrentIndex = startIndex;
-        _path.Add(CurrentIndex);
     }
 
     /// <summary>
@@ -93,7 +92,8 @@ public class VoronoiPath
         _path.Add(CurrentIndex);
         CurrentIndex = _currentNeighbours[Random.Range(0, _currentNeighbours.Count)];
 
-        CurrentLength += DistanceBetweenTwoPoints(_path.Count - 1, _path.Count - 2);
+        if (_path.Count > 1)
+            CurrentLength += DistanceBetweenTwoPoints(_path.Count - 1, _path.Count - 2);
     }
 
     /// <summary>
@@ -125,6 +125,12 @@ public class VoronoiPath
         _path.RemoveAt(_path.Count - 1);
     }
 
+    public void BackCompletely(float minLength)
+    {
+        while (HypothecialCircuitLength > minLength)
+            BackPathOneStep();
+    }
+
     /// <summary>
     /// Checks if the closing of the circuit from this position would make intersections. If it does -> how many?
     /// </summary>
@@ -137,7 +143,7 @@ public class VoronoiPath
         Vector2 p1 = _voronoiGraph.GetGraphNodeByIndex(_path[0]).position;
         Vector2 p2 = _voronoiGraph.GetGraphNodeByIndex(_path[_path.Count - 1]).position;
 
-        for (int i = _path.Count - 2; i >= 3; i--)
+        for (int i = _path.Count - 2; i >= 2; i--)
         {
             //Points in line to check against 
             Vector2 p3 = _voronoiGraph.GetGraphNodeByIndex(_path[i]).position;
@@ -170,12 +176,19 @@ public class VoronoiPath
 
 public class Pathing
 {
-    public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float maxLength, float minLength)
+    /// <summary>
+    /// Attempts to create a circuit based on a voronoi graph that does not intersect and is within correct length
+    /// </summary>
+    /// <param name="voronoiGraph">The graph the path is based on</param>
+    /// <param name="minLength">The minimum circuit length that is valid</param>
+    /// <param name="maxLength">The maxiumum circuit length that is valid</param>
+    /// <returns>An ordered list of points making up the circuit</returns>
+    public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float minLength, float maxLength)
     {
         VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount));
         float preferredLength = Random.Range(minLength, maxLength);
 
-        while (path.HypothecialCircuitLength < preferredLength)
+        while (true)
         {
             path.UpdateCurrentPoint();
             //Valid point! (for now UmU)
@@ -187,9 +200,11 @@ public class Pathing
             //Path can't proceed further -> back-track
             else
             {
+                //There was a failure finding a valid circuit over the graph
                 if (path.TriedAllCases)
                 {
                     path.SetLongestPathToPath();
+                    Debug.Log("I found no path bitch");
                     break;
                 }
 
@@ -197,11 +212,17 @@ public class Pathing
             }
 
             //Time to try and close
-            if (path.HypothecialCircuitLength > preferredLength)
+            if (path.HypothecialCircuitLength > preferredLength && path.HypothecialCircuitLength <= maxLength)
             {
-                path.DoesHypotheticalCircuitIntersect(out int amount);
-                Debug.Log("Intersect: " + (amount > 0) + ", " + amount + " times");
+                Debug.Log("Actual:" + path.HypothecialCircuitLength + ", preferred: " + preferredLength);
+
+                //Closing the circuit now would not be valid
+                if (!path.DoesHypotheticalCircuitIntersect(out int amount))
+                    break;
             }
+            //Circuit is too long
+            else if (path.HypothecialCircuitLength > maxLength)
+                path.BackCompletely(minLength);
         }
 
         path.ConnectCircuit();
