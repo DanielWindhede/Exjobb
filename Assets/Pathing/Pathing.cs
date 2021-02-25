@@ -32,6 +32,10 @@ public class VoronoiPath
     /// </summary>
     private List<int> _currentNeighbours = new List<int>();
     private float _maxStraightLength;
+    private float _minStraightLength;
+    private float _minLengthStartGrid;
+    private float _minLengthFromFinishLine;
+    private Vector2 _finishLine;
 
     /// <summary>
     /// There are paths from current point that can be taken
@@ -40,6 +44,7 @@ public class VoronoiPath
     public bool TriedAllCases { get { return _path.Count == 0; } }
 
     public bool IsHypotheticalCircuitStraightTooLong { get { return ClosingStraightLength > _maxStraightLength; } }
+    public bool IsHypotheticalCircuitStraightTooShort { get { return ClosingStraightLength < _minStraightLength; } }
     public float ClosingStraightLength { get { return DistanceBetweenTwoPoints(_path[_path.Count - 1], _path[0]); } }
 
     /// <summary>
@@ -56,11 +61,16 @@ public class VoronoiPath
         }
     }
 
-    public VoronoiPath(VoronoiGraph voronoiGraph, int startIndex, float maxStraightLength)
+    public VoronoiPath(VoronoiGraph voronoiGraph, int startIndex,
+                       float maxStraightLength, float minStraightLength,
+                       float minLengthFromFinishLine, float minLengthStartGrid)
     {
         _voronoiGraph = voronoiGraph;
         CurrentIndex = startIndex;
         _maxStraightLength = maxStraightLength;
+        _minStraightLength = minStraightLength;
+        _minLengthStartGrid = minLengthStartGrid;
+        _minLengthFromFinishLine = minLengthFromFinishLine;
     }
 
     /// <summary>
@@ -71,6 +81,9 @@ public class VoronoiPath
         get
         {
             List<Vector2> pathPositions = new List<Vector2>();
+
+            pathPositions.Add(_finishLine);
+
             for (int i = 0; i < _path.Count; i++)
                 pathPositions.Add(_voronoiGraph.GetGraphNodeByIndex(_path[i]).position);
 
@@ -184,6 +197,22 @@ public class VoronoiPath
     {
         return (_voronoiGraph.GetGraphNodeByIndex(index1).position - _voronoiGraph.GetGraphNodeByIndex(index2).position).magnitude;
     }
+
+    public void InsertFinishLine()
+    {
+        Vector2 startPoint = _voronoiGraph.GetGraphNodeByIndex(_path[0]).position; // 250
+        Vector2 endPoint = _voronoiGraph.GetGraphNodeByIndex(_path[_path.Count - 1]).position; // 208
+
+        Vector2 direction = (endPoint - startPoint).normalized;
+
+        Vector2 a = startPoint + direction * _minLengthStartGrid;
+        Vector2 b = endPoint + -direction * _minLengthFromFinishLine;
+
+        float t = Random.Range(0f, 1f);
+        _finishLine = Vector2.Lerp(a, b, t);
+        Debug.Log("t: " + t + ", finshline: " + _finishLine);
+        //Vector2 c = a + t * (b - a);
+    }
 }
 
 public struct CircuitInformation
@@ -211,9 +240,11 @@ public class Pathing
     /// <param name="minLength">The minimum circuit length that is valid</param>
     /// <param name="maxLength">The maxiumum circuit length that is valid</param>
     /// <returns>An ordered list of points making up the circuit</returns>
-    public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float minLength, float maxLength, float maxStraightLength, ref int recursionCounter, ref CircuitInformation circuitInformation)
+    public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float minLength, float maxLength,
+                                                      float maxStraightLength, float minStraightLength, float minLengthStartGrid, float minLengthFromFinishLine,
+                                                      ref int recursionCounter, ref CircuitInformation circuitInformation)
     {
-        VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount), maxStraightLength);
+    VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount), maxStraightLength, minStraightLength, minLengthFromFinishLine, minLengthStartGrid);
         float preferredLength = Random.Range(minLength, maxLength);
         bool foundValidCircuit = true;
 
@@ -244,7 +275,7 @@ public class Pathing
             if (path.HypothecialCircuitLength > preferredLength && path.HypothecialCircuitLength <= maxLength)
             {
                 //Closing the circuit now would not be valid
-                if (!path.DoesHypotheticalCircuitIntersect(out int amount) && !path.IsHypotheticalCircuitStraightTooLong)
+                if (!path.DoesHypotheticalCircuitIntersect(out int amount) && !path.IsHypotheticalCircuitStraightTooLong && !path.IsHypotheticalCircuitStraightTooShort)
                     break;
             }
             //Circuit is too long
@@ -257,12 +288,15 @@ public class Pathing
             if (recursionCounter > 5)
                 throw new System.Exception("Keep failing finding a valid circuit! Probably odd parameters!!!");
             recursionCounter++;
-            return GenerateRandomCircuit(voronoiGraph, minLength, maxLength, maxStraightLength, ref recursionCounter, ref circuitInformation);
+            return GenerateRandomCircuit(voronoiGraph, minLength, maxLength, maxStraightLength, minStraightLength, minLengthStartGrid, minLengthFromFinishLine, ref recursionCounter, ref circuitInformation);
         }
 
         circuitInformation = new CircuitInformation(path.HypothecialCircuitLength, path.ClosingStraightLength, path.PathInPoints.Count - 1, preferredLength);
+        
+        path.InsertFinishLine();
 
         path.ConnectCircuit();
+
 
         return path.PathInPoints;
     }

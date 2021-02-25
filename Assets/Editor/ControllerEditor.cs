@@ -39,9 +39,13 @@ public class ControllerEditor : Editor
 
 					if (GUILayout.Button("+"))
 						_controller.Seed++;
-				}
 
+				}
 				EditorGUILayout.EndHorizontal();
+
+				if (GUILayout.Button("Random Seed"))
+					_controller.Seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+
 
 				if (_autoRefresh && EditorGUI.EndChangeCheck())
 					_controller.Refresh();

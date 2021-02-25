@@ -29,6 +29,9 @@ public class Controller : MonoBehaviour
     [SerializeField] float _minCircuitLength = 3.5f;
     [SerializeField] float _maxCircuitLength = 7.0f;
     [SerializeField] float _maxStraightLength = 2.0f;
+    [SerializeField] float _minStraightLength = 0.458f;
+    [SerializeField] float _minLengthFromFinishLine = 0.25f;
+    [SerializeField] float _minLengthStartGrid = 0.208f;
     [SerializeField] bool _useManualPoints = true;
     [SerializeField] List<Vector2> _manualPoints;
     [SerializeField] bool _autoCurve = true;
@@ -68,7 +71,7 @@ public class Controller : MonoBehaviour
         _displayGraph.Display(voronoiGraph);
 
         int recursionCounter = 0;
-        List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, _minCircuitLength, _maxCircuitLength, _maxStraightLength, ref recursionCounter, ref _circuitInformation);
+        List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, _minCircuitLength, _maxCircuitLength, _maxStraightLength, _minStraightLength, _minLengthStartGrid, _minLengthFromFinishLine, ref recursionCounter, ref _circuitInformation);
         _displayPathing.Display(path);
 
         path = _useManualPoints ? _manualPoints : path;
