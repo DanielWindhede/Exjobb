@@ -58,6 +58,7 @@ public class DisplayCurve : MonoBehaviour
     /// <param name="points">Line segments</param>
     public void SetupCurve(BezierPathSegment[] points)
     {
+        ClearSpawnables();
         _points = points;
 
         if (_showFinishedProduct)
@@ -80,7 +81,7 @@ public class DisplayCurve : MonoBehaviour
     /// <summary>
     /// Setup the TessellationOptions that will persist throughout the playtime
     /// </summary>
-    void SetupOptions()
+    private void SetupOptions()
     {
         _options = new VectorUtils.TessellationOptions()
         {
@@ -94,7 +95,7 @@ public class DisplayCurve : MonoBehaviour
     /// <summary>
     /// Create new mesh that will display line and apply it to meshFilter
     /// </summary>
-    void SetupMesh()
+    private void SetupMesh()
     {
         _mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = _mesh;
@@ -102,29 +103,35 @@ public class DisplayCurve : MonoBehaviour
 
     #endregion
 
+    private void ClearSpawnables()
+    {
+        for (int i = _holder.childCount - 1; i >= 0; i--)
+            Destroy(_holder.GetChild(i).gameObject);
+    }
+
     /// <summary>
     /// Add visuals for turns, arrow and finish line
     /// </summary>
-    void SetupSpawnables()
+    private void SetupSpawnables()
     {
         BezierPathSegment[] allTurns = _path.Contours[0].Segments;
         //Turns
         SetupTurns(in allTurns);
 
         //Arrow
-        GameObject arrow = Instantiate(_arrowPrefab, allTurns[1].P0, Quaternion.identity, _holder) as GameObject;
-        arrow.transform.right = allTurns[2].P0 - allTurns[1].P0;
+        GameObject arrow = Instantiate(_arrowPrefab, allTurns[0].P0, Quaternion.identity, _holder) as GameObject;
+        arrow.transform.right = allTurns[1].P0 - allTurns[0].P0;
         arrow.transform.Translate(_arrowOffset);
 
         //Finish line
-        GameObject finishLine = Instantiate(_finishLinePrefab, allTurns[1].P0, Quaternion.identity, _holder) as GameObject;
-        finishLine.transform.up = allTurns[2].P0 - allTurns[1].P0;
+        GameObject finishLine = Instantiate(_finishLinePrefab, allTurns[0].P0, Quaternion.identity, _holder) as GameObject;
+        finishLine.transform.up = allTurns[1].P0 - allTurns[0].P0;
     }
 
-    void SetupTurns(in BezierPathSegment[] allTurns)
+    private void SetupTurns(in BezierPathSegment[] allTurns)
     {
         //Skip first and second one since that is the same as last one and 2nd is start line 
-        for (int i = 2; i < allTurns.Length; i++)
+        for (int i = 1; i < allTurns.Length; i++)
         {
             Vector2 prePoint = allTurns[Utility.Modulo(i - 1, allTurns.Length - 1)].P0;
             Vector2 nextPoint = allTurns[Utility.Modulo(i + 1, allTurns.Length - 1)].P0;
@@ -136,18 +143,18 @@ public class DisplayCurve : MonoBehaviour
             {
                 Vector2 spawnPosition = allTurns[i].P0 + (preVector + nextVector).normalized * _turnOffset;
                 GameObject turnObj = Instantiate(_turnPrefab, spawnPosition, Quaternion.identity, _holder) as GameObject;
-                turnObj.GetComponent<TurnNumber>().SetNumber(i - 1);
+                turnObj.GetComponent<TurnNumber>().SetNumber(i);
             }          
         }
     }
 
-    void Display()
+    private void Display()
     {
         List<VectorUtils.Geometry> geometries = VectorUtils.TessellateScene(_scene, _options);
         VectorUtils.FillMesh(_mesh, geometries, _size);
     }
 
-    void DisplayPoints()
+    private void DisplayPoints()
     {
         UnityEditor.Handles.color = _pointColor;
 
@@ -155,7 +162,7 @@ public class DisplayCurve : MonoBehaviour
             UnityEditor.Handles.DrawSolidDisc(segment.P0, Vector3.back, _pointRadius);
     }
 
-    void DisplayControlPoints()
+    private void DisplayControlPoints()
     {
         for (int i = 0; i < _points.Length; i++)
         {
@@ -172,7 +179,7 @@ public class DisplayCurve : MonoBehaviour
         }
     }
 
-    void DisplayBezierCurve()
+    private void DisplayBezierCurve()
     {
         for (int i = 0; i < _points.Length - 1; i++)
             UnityEditor.Handles.DrawBezier(_points[i].P0, _points[i + 1].P0, _points[i].P1, _points[i].P2, _bezierCurveColor, null, _bezierCurveWidth);
