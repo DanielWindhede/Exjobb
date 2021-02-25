@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62705a5f5c79fdd4d8a189454438efc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _use: 0
+  _use: 1
   _showPath: 1
   _pathColor: {r: 1, g: 0, b: 1, a: 1}
   _offset: {x: 0, y: 0}
@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08c75bf7fe0c55145b7a538fa10ce909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _show: 0
+  _show: 1
   _showLines: 1
   _showPoints: 1
   _lineColor: {r: 0, g: 1, b: 0, a: 1}
@@ -202,9 +202,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfbceaafab088149887af390c0e9530, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pointAmount: 200
-  _bounds: {x: 2, y: 2}
-  _seed: 3
+  _pointAmount: 75
+  _bounds: {x: 3, y: 3}
+  _seed: -518177345
+  _centerPath: 1
+  _centerPoint: {x: 0, y: 0}
+  _minCircuitLength: 3.5
+  _maxCircuitLength: 7
+  _maxStraightLength: 2
+  _minStraightLength: 0.458
+  _minLengthFromFinishLine: 0.25
+  _minLengthStartGrid: 0.208
+  _minNodeLength: 0.025
   _useManualPoints: 0
   _manualPoints:
   - {x: 0, y: 0}
@@ -215,7 +224,7 @@ MonoBehaviour:
   - {x: -0.25, y: 0.25}
   - {x: 0, y: 0}
   _autoCurve: 1
-  _minCurve: 0
+  _minCurve: 1
   _maxCurve: 1
   _maxControlPointLength: 0.03
   _autoCurveWeigth: 0.25
@@ -258,6 +267,14 @@ PrefabInstance:
     - target: {fileID: 4871276382890363804, guid: d62e42553f035a04dbe46c96f102e980, type: 3}
       propertyPath: _bezierCurveWidth
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4871276382890363804, guid: d62e42553f035a04dbe46c96f102e980, type: 3}
+      propertyPath: _showFinishedProduct
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4871276382890363804, guid: d62e42553f035a04dbe46c96f102e980, type: 3}
+      propertyPath: _showPoints
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4871276382890363805, guid: d62e42553f035a04dbe46c96f102e980, type: 3}
       propertyPath: m_Mesh

@@ -16,16 +16,19 @@ public class Controller : MonoBehaviour
         get { return _circuitInformation; }
     }
 
+    [Header("Main Settings")]
+
+    [SerializeField] int _seed;
+    [SerializeField] bool _centerPath = true;
+    [SerializeField] Vector2 _centerPoint = Vector2.zero;
+
     [Header("Delaunay Triangulation Settings")]
 
     [SerializeField] private int _pointAmount;
     [SerializeField] private Vector2 _bounds;
 
-    [Header("Settings")]
+    [Header("Circuit Settings")]
 
-    [SerializeField] int _seed;
-    [SerializeField] bool _centerPath = true;
-    [SerializeField] Vector2 _centerPoint = Vector2.zero;
     [SerializeField] float _minCircuitLength = 3.5f;
     [SerializeField] float _maxCircuitLength = 7.0f;
     [SerializeField] float _maxStraightLength = 2.0f;
@@ -33,14 +36,21 @@ public class Controller : MonoBehaviour
     [SerializeField] float _minLengthFromFinishLine = 0.25f;
     [SerializeField] float _minLengthStartGrid = 0.208f;
     [SerializeField] float _minNodeLength = 0.05f;
-    [SerializeField] bool _useManualPoints = true;
-    [SerializeField] List<Vector2> _manualPoints;
+
+    [Header("Curve Settings")]
+
     [SerializeField] bool _autoCurve = true;
     [SerializeField] float _minCurve = 0.0f;
     [SerializeField] float _maxCurve = 2.0f;
     [SerializeField] float _maxControlPointLength = 1.0f;
     [SerializeField] float _autoCurveWeigth = 0.25f;
     [SerializeField] float _curvatureScale = 0.035f;
+
+    [Header("Manual Settings")]
+
+    [SerializeField] bool _useManualCircuit;
+    [SerializeField] CircuitScriptableObject _manualCircuit;
+
 
     private DisplayCurve _displayCurveScript;
     private DisplayDelaunayTriangulation _displayDelaunayTriangulation;
@@ -75,12 +85,13 @@ public class Controller : MonoBehaviour
         List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, _minCircuitLength, _maxCircuitLength, _maxStraightLength, _minStraightLength, _minLengthStartGrid, _minLengthFromFinishLine, _minNodeLength, ref recursionCounter, ref _circuitInformation);
         _displayPathing.Display(path);
 
-        path = _useManualPoints ? _manualPoints : path;
-
         if (_centerPath)
             CenterPath(_centerPoint, ref path);
 
         CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(path, _minCurve, _maxCurve, _autoCurveWeigth, _autoCurve);
+
+        curvaturePoints = _useManualCircuit ? _manualCircuit._circuitPoints : curvaturePoints;
+
         _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints, _maxControlPointLength));
     }
 
