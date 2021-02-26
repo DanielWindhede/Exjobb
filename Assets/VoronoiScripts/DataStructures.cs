@@ -1,6 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+public struct CircuitInformation
+{
+    public float circuitLength;
+    public float closingStraightLength;
+    public float longestStraightLength;
+    public int turnAmount;
+    public float preferredCircuitLength;
+    public bool clockWise;
+
+    public CircuitInformation(float circuitLength, float closingStraightLength, float longestStraightLength, int turnAmount, float preferredCircuitLength, bool clockWise)
+    {
+        this.circuitLength = circuitLength;
+        this.closingStraightLength = closingStraightLength;
+        this.longestStraightLength = longestStraightLength;
+        this.turnAmount = turnAmount;
+        this.preferredCircuitLength = preferredCircuitLength;
+        this.clockWise = clockWise;
+    }
+}
+
 public class Triangle
 {
     public Vector2[] vertices;

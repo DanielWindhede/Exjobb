@@ -62,6 +62,8 @@ public class ControllerEditor : Editor
 					EditorGUILayout.LabelField("Preferred Circuit length: " + Math.Round(info.preferredCircuitLength, 3) + "km", EditorStyles.boldLabel);
 					EditorGUILayout.LabelField("Turn Amount: " + info.turnAmount, EditorStyles.boldLabel);
 					EditorGUILayout.LabelField("Closing Straight length: " + Math.Round(info.closingStraightLength, 3) + "km", EditorStyles.boldLabel);
+					EditorGUILayout.LabelField("Longest Straight length: " + Math.Round(info.longestStraightLength, 3) + "km", EditorStyles.boldLabel);
+					EditorGUILayout.LabelField("Clockwise: " + info.clockWise, EditorStyles.boldLabel);
 				}
 
 				EditorGUI.indentLevel = 0;

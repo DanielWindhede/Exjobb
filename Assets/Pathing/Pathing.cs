@@ -73,6 +73,43 @@ public class VoronoiPath
         }
     }
 
+    public float LongestStraight
+    {
+        get
+        {
+            float longestStraight = ClosingStraightLength;
+            List<Vector2> points = PathInPoints;
+
+            //Skip hypothetical closing straight
+            for (int i = 1; i < points.Count - 2; i++)
+            {
+                float thisStraight = (points[i] - points[i + 1]).magnitude;
+                longestStraight = thisStraight > longestStraight ? thisStraight : longestStraight;
+            }
+
+            return longestStraight;
+        }
+    }
+
+    public bool IsClockWise
+    {
+        get
+        {
+            List<Vector2> points = PathInPoints;
+
+            float total = AddEdge(points[points.Count - 2], points[1]);
+            for (int i = 1; i < points.Count - 2; i++)
+                total += AddEdge(points[i], points[i + 1]);
+
+            return total > 0;
+        }
+    }
+
+    private float AddEdge(Vector2 p1, Vector2 p2)
+    {
+        return (p2.x - p1.x) * (p2.y + p1.y);
+    }
+
     public VoronoiPath(VoronoiGraph voronoiGraph, int startIndex,
                        float maxStraightLength, float minStraightLength,
                        float minLengthFromFinishLine, float minLengthStartGrid,
@@ -230,22 +267,6 @@ public class VoronoiPath
     }
 }
 
-public struct CircuitInformation
-{
-    public float circuitLength;
-    public float closingStraightLength;
-    public int turnAmount;
-    public float preferredCircuitLength;
-
-    public CircuitInformation(float circuitLength, float closingStraightLength, int turnAmount, float preferredCircuitLength)
-    {
-        this.circuitLength = circuitLength;
-        this.closingStraightLength = closingStraightLength;
-        this.turnAmount = turnAmount;
-        this.preferredCircuitLength = preferredCircuitLength;
-    }
-}
-
 public class Pathing
 {
     /// <summary>
@@ -256,11 +277,11 @@ public class Pathing
     /// <param name="maxLength">The maxiumum circuit length that is valid</param>
     /// <returns>An ordered list of points making up the circuit</returns>
     public static List<Vector2> GenerateRandomCircuit(VoronoiGraph voronoiGraph, float minLength, float maxLength,
-                                                      float maxStraightLength, float minStraightLength, float minLengthStartGrid, 
+                                                      float maxStraightLength, float minStraightLength, float minLengthStartGrid,
                                                       float minLengthFromFinishLine, float minNodeLength, float minTurnAngle,
                                                       ref int recursionCounter, ref CircuitInformation circuitInformation)
     {
-    VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount), maxStraightLength, minStraightLength, minLengthFromFinishLine, minLengthStartGrid, minNodeLength, minTurnAngle);
+        VoronoiPath path = new VoronoiPath(voronoiGraph, Random.Range(0, voronoiGraph.AllNodesCount), maxStraightLength, minStraightLength, minLengthFromFinishLine, minLengthStartGrid, minNodeLength, minTurnAngle);
         float preferredLength = Random.Range(minLength, maxLength);
         bool foundValidCircuit = true;
 
@@ -307,11 +328,16 @@ public class Pathing
             return GenerateRandomCircuit(voronoiGraph, minLength, maxLength, maxStraightLength, minStraightLength, minLengthStartGrid, minLengthFromFinishLine, minNodeLength, minTurnAngle, ref recursionCounter, ref circuitInformation);
         }
 
-        circuitInformation = new CircuitInformation(path.HypothecialCircuitLength, path.ClosingStraightLength, path.PathInPoints.Count - 1, preferredLength);
-        
+        circuitInformation = SetCircuitInformation(path, preferredLength);
+
         path.InsertFinishLine();
         path.ConnectCircuit();
 
         return path.PathInPoints;
+    }
+
+    private static CircuitInformation SetCircuitInformation(VoronoiPath path, float preferredLength)
+    {
+        return new CircuitInformation(path.HypothecialCircuitLength, path.ClosingStraightLength, path.LongestStraight, path.PathInPoints.Count - 1, preferredLength, path.IsClockWise);
     }
 }
