@@ -36,6 +36,7 @@ public class Controller : MonoBehaviour
     [SerializeField] float _minLengthFromFinishLine = 0.25f;
     [SerializeField] float _minLengthStartGrid = 0.208f;
     [SerializeField] float _minNodeLength = 0.05f;
+    [SerializeField] float _minTurnAngle = 10f;
 
     [Header("Curve Settings")]
 
@@ -82,7 +83,7 @@ public class Controller : MonoBehaviour
         _displayGraph.Display(voronoiGraph);
 
         int recursionCounter = 0;
-        List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, _minCircuitLength, _maxCircuitLength, _maxStraightLength, _minStraightLength, _minLengthStartGrid, _minLengthFromFinishLine, _minNodeLength, ref recursionCounter, ref _circuitInformation);
+        List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, _minCircuitLength, _maxCircuitLength, _maxStraightLength, _minStraightLength, _minLengthStartGrid, _minLengthFromFinishLine, _minNodeLength, _minTurnAngle, ref recursionCounter, ref _circuitInformation);
         _displayPathing.Display(path);
 
         if (_centerPath)

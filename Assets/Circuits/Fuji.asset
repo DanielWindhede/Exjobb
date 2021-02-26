@@ -10,42 +10,54 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e959679b49194614f89596b7b9712108, type: 3}
-  m_Name: TestCircuit
+  m_Name: Fuji
   m_EditorClassIdentifier: 
   _circuitPoints:
   - point: {x: 0.647, y: 0}
-    curveAmount: 0
-  - point: {x: 1.496, y: 0}
-    curveAmount: 0
+    curveAmount: 1
+  - point: {x: 1.496, y: -0.005}
+    curveAmount: 0.5
   - point: {x: 1.433, y: -0.095}
     curveAmount: 0
   - point: {x: 1.061, y: -0.207}
-    curveAmount: 0
-  - point: {x: 0.969, y: -0.419}
-    curveAmount: 0
-  - point: {x: 0.771, y: -0.378}
-    curveAmount: 0
-  - point: {x: 0.761, y: -0.195}
-    curveAmount: 0
-  - point: {x: 0.682, y: -0.207}
-    curveAmount: 0
+    curveAmount: 0.5
+  - point: {x: 1, y: -0.36}
+    curveAmount: 1
+  - point: {x: 0.9076, y: -0.455}
+    curveAmount: 1
+  - point: {x: 0.772, y: -0.379}
+    curveAmount: 1
+  - point: {x: 0.76, y: -0.19}
+    curveAmount: 1
+  - point: {x: 0.696, y: -0.19}
+    curveAmount: 1
   - point: {x: 0.567, y: -0.359}
-    curveAmount: 0
-  - point: {x: 0.366, y: -0.458}
-    curveAmount: 0
-  - point: {x: 0.089, y: -0.438}
-    curveAmount: 0
-  - point: {x: 0.115, y: -0.385}
-    curveAmount: 0
-  - point: {x: 0.056, y: -0.336}
-    curveAmount: 0
-  - point: {x: 0.036, y: -0.197}
-    curveAmount: 0
-  - point: {x: 0.184, y: -0.177}
-    curveAmount: 0
-  - point: {x: 0.207, y: -0.085}
-    curveAmount: 0
-  - point: {x: 0.019, y: -0.075}
-    curveAmount: 0
-  - point: {x: 0, y: 0}
-    curveAmount: 0
+    curveAmount: 1
+  - point: {x: 0.3628, y: -0.4578}
+    curveAmount: 0.1
+  - point: {x: 0.087, y: -0.438}
+    curveAmount: 0.5
+  - point: {x: 0.1132, y: -0.3822}
+    curveAmount: 0.5
+  - point: {x: 0.0535, y: -0.3316}
+    curveAmount: 1
+  - point: {x: 0.039, y: -0.191}
+    curveAmount: 1
+  - point: {x: 0.068, y: -0.193}
+    curveAmount: 1
+  - point: {x: 0.189, y: -0.179}
+    curveAmount: 1
+  - point: {x: 0.221, y: -0.129}
+    curveAmount: 1
+  - point: {x: 0.208, y: -0.081}
+    curveAmount: 0.25
+  - point: {x: 0.098, y: -0.092}
+    curveAmount: 1
+  - point: {x: 0.01, y: -0.071}
+    curveAmount: 1
+  - point: {x: -0.008, y: -0.021}
+    curveAmount: 1
+  - point: {x: 0, y: -0.005}
+    curveAmount: 1
+  - point: {x: 0.647, y: 0}
+    curveAmount: 1
