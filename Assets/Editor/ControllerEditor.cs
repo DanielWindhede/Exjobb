@@ -8,15 +8,20 @@ using UnityEngine;
 public class ControllerEditor : Editor
 {
 	private Controller _controller { get { return (Controller)base.target; } }
-
+	private int _seedHistorySize = 25;
+	private List<int> _seedHistory = new List<int>();
 	private bool _autoRefresh = true;
 	private bool _showBaseGUI = false;
+	private bool _showSeedHistory = false;
 	private bool _showTrackInformation = false;
 
 	public override void OnInspectorGUI()
 	{
 		if (EditorApplication.isPlaying)
 		{
+			if (_seedHistory.Count == 0)
+				_seedHistory.Add(_controller.Seed);
+
 			EditorGUILayout.BeginVertical();
 			{
 				EditorGUILayout.BeginHorizontal();
@@ -48,7 +53,37 @@ public class ControllerEditor : Editor
 
 
 				if (_autoRefresh && EditorGUI.EndChangeCheck())
+				{
+					if (_seedHistory.Count > _seedHistorySize)
+						_seedHistory.RemoveAt(0);
+
+					if (!_seedHistory.Contains(_controller.Seed))
+						_seedHistory.Add(_controller.Seed);
+
 					_controller.Refresh();
+				}
+
+				_showSeedHistory = EditorGUILayout.Foldout(_showSeedHistory, "Seed History", true, EditorStyles.foldout);
+				if (_showSeedHistory)
+				{
+					EditorGUI.indentLevel = 1;
+                    for (int i = _seedHistory.Count - 2; i >= 0; i--)
+					{
+						EditorGUILayout.BeginHorizontal();
+						{
+							EditorGUILayout.IntField(_seedHistory[i]);
+
+							if (GUILayout.Button("Use Seed"))
+							{
+								_controller.Seed = _seedHistory[i];
+								_controller.Refresh();
+							}
+						}
+						EditorGUILayout.EndHorizontal();
+					}
+				}
+
+				EditorGUI.indentLevel = 0;
 
 				_showTrackInformation = EditorGUILayout.Foldout(_showTrackInformation, "Track information", true, EditorStyles.foldout);
 				if (_showTrackInformation)

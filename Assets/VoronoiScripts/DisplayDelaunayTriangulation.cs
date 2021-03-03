@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class DisplayDelaunayTriangulation : MonoBehaviour
@@ -56,11 +57,13 @@ public class DisplayDelaunayTriangulation : MonoBehaviour
         Gizmos.color = _superTriangleColors;
         if (true)
         {
-            Gizmos.DrawLine(Vector3.up, Vector2.up * _bounds.y);
-            Gizmos.DrawLine(Vector3.zero, Vector2.right * _bounds.x);
-            Gizmos.DrawLine(Vector2.right * _bounds.x, Vector2.one * _bounds);
-            Gizmos.DrawLine(Vector2.up * _bounds.y, Vector2.one * _bounds);
+            // Bounds
+            Handles.DrawDottedLine(Vector3.up, Vector2.up * _bounds.y, 15f);
+            Handles.DrawDottedLine(Vector3.zero, Vector2.right * _bounds.x, 15f);
+            Handles.DrawDottedLine(Vector2.right * _bounds.x, Vector2.one * _bounds, 15f);
+            Handles.DrawDottedLine(Vector2.up * _bounds.y, Vector2.one * _bounds, 15f);
 
+            // Super Triangle
             Triangle superTriangle = DelaunayTriangulationGenerator.GenerateSuperTriangle(_bounds);
             Gizmos.DrawLine(superTriangle.A, superTriangle.B);
             Gizmos.DrawLine(superTriangle.B, superTriangle.C);
