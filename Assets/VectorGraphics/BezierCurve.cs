@@ -40,19 +40,35 @@ public class BezierCurve
         int prePoint = Utility.Modulo(pointIndex - 1, points.Length - 1);
         int nextPoint = Utility.Modulo(pointIndex + 1, points.Length - 1);
 
+
+        /* OLD WAY
+        //Pointing toward next point
+        Vector2 direction = (points[nextPoint].point - points[prePoint].point).normalized;
+        //Reverse if looking backward
+        direction *= forward ? 1 : -1;
+        Vector2 controlPointPosition = points[pointIndex].point + direction * curveAmount;
+
+        return controlPointPosition;
+        */
+
+
+
+
+
         Vector2 toPre = points[prePoint].point - points[pointIndex].point;
         Vector2 toNext = points[nextPoint].point - points[pointIndex].point;
 
         Vector2 controlPointDirection = toNext.normalized - toPre.normalized;
         controlPointDirection *= forward ? 1 : -1;
 
-        Vector2 controlPoint = controlPointDirection.normalized * (forward ? toNext.magnitude / 2f : toPre.magnitude / 2f);
-        controlPoint *= points[pointIndex].curveAmount;
+        Vector2 controlPointOffset = controlPointDirection.normalized * (forward ? toNext.magnitude / 2f : toPre.magnitude / 2f);
+        controlPointOffset *= points[pointIndex].curveAmount;
 
-        if (controlPoint.magnitude > maxControlPointLength)
-            controlPoint = controlPoint.normalized * maxControlPointLength;
+        //Clamp to maxLength if too long
+        if (controlPointOffset.magnitude > maxControlPointLength)
+            controlPointOffset = controlPointOffset.normalized * maxControlPointLength;
 
-        return points[pointIndex].point + controlPoint;
+        return points[pointIndex].point + controlPointOffset;
     }
 }
 

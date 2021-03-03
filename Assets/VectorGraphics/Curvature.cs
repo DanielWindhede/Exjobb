@@ -49,6 +49,9 @@ public class Curvature
             dotValue = Mathf.Clamp(dotValue, 0, 1);
         }
 
+        // OLD WAY
+        //return (Random.Range(min, max) + dotValue) * 0.1f;
+
         return Mathf.Clamp(Random.Range(min, max) + dotValue * autoCurveWeight, 0.0f, 1.0f);
     }
 }
