@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Unity.VectorGraphics;
+using UnityEditor;
 using UnityEngine;
 
 public class DisplayCurve : MonoBehaviour
@@ -23,6 +24,7 @@ public class DisplayCurve : MonoBehaviour
     [SerializeField] bool _use = true;
     [SerializeField] bool _showPoints = true;
     [SerializeField] bool _showControlPoints = true;
+    [SerializeField] float _controlPointLineThickness = 2f;
     [SerializeField] bool _showBezierCurve = true;
     [SerializeField] Color _pointColor = Color.black;
     [SerializeField] Color _controlPointColor = Color.red;
@@ -171,11 +173,11 @@ public class DisplayCurve : MonoBehaviour
             UnityEditor.Handles.DrawSolidDisc(_points[i].P1, Vector3.back, _controlPointRadius);
             UnityEditor.Handles.DrawSolidDisc(_points[i].P2, Vector3.back, _controlPointRadius);
 
-            Gizmos.color = _controlPointLineColor;
+            Handles.color = _controlPointLineColor;
 
-            Gizmos.DrawLine(_points[i].P0, _points[i].P1);
+            Handles.DrawLine(_points[i].P0, _points[i].P1, _controlPointLineThickness);
             if (i + 1 < _points.Length)
-                Gizmos.DrawLine(_points[i].P2, _points[i + 1].P0);
+                Handles.DrawLine(_points[i].P2, _points[i + 1].P0, _controlPointLineThickness);
         }
     }
 
