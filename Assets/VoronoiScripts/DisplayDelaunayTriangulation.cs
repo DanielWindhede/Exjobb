@@ -6,6 +6,7 @@ using UnityEngine;
 public class DisplayDelaunayTriangulation : MonoBehaviour
 {
     [SerializeField] private bool _use = true;
+    [SerializeField] private float _triangleLineThickness = 2f;
     [SerializeField] private bool _displayAll = true;
     [SerializeField] private int _index = 0;
     [SerializeField] private float _circleCenterRadius1 = 0.1f;
@@ -43,12 +44,12 @@ public class DisplayDelaunayTriangulation : MonoBehaviour
 
     private void DrawTriangles()
     {
-        Gizmos.color = _triangleColors;
+        Handles.color = _triangleColors;
         foreach (var triangle in _currentTriangulation)
         {
-            Gizmos.DrawLine(triangle.A, triangle.B);
-            Gizmos.DrawLine(triangle.B, triangle.C);
-            Gizmos.DrawLine(triangle.C, triangle.A);
+            Handles.DrawLine(triangle.A, triangle.B, _triangleLineThickness);
+            Handles.DrawLine(triangle.B, triangle.C, _triangleLineThickness);
+            Handles.DrawLine(triangle.C, triangle.A, _triangleLineThickness);
         }
     }
 

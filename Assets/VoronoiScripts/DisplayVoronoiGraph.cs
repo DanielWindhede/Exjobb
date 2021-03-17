@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class DisplayVoronoiGraph : MonoBehaviour
 {
     [SerializeField] private bool _show = true;
+    [SerializeField] private float _lineThickness = 2f;
 
     [SerializeField] private bool _showLines = true;
     [SerializeField] private bool _showPoints = true;
@@ -25,13 +27,15 @@ public class DisplayVoronoiGraph : MonoBehaviour
 
     private void DrawLines()
     {
-        Gizmos.color = _lineColor;
+        //Gizmos.color = _lineColor;
+        Handles.color = _lineColor;
 
         for (int i = 0; i < _graph.AllNodesCount; i++)
         {
             foreach (int neighbourNode in _graph.GetGraphNodeByIndex(i).neighborNodeIndexes)
             {
-                Gizmos.DrawLine(_graph.GetGraphNodeByIndex(i).position, _graph.GetGraphNodeByIndex(neighbourNode).position);
+                Handles.DrawLine(_graph.GetGraphNodeByIndex(i).position, _graph.GetGraphNodeByIndex(neighbourNode).position, _lineThickness);
+                //Gizmos.DrawLine(_graph.GetGraphNodeByIndex(i).position, _graph.GetGraphNodeByIndex(neighbourNode).position);
             }
         }
     }
@@ -49,7 +53,7 @@ public class DisplayVoronoiGraph : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (_graph != null && _show)
+        if (_graph != null && _graph._allPoints != null && _show)
         {
             if (_showLines)
                 DrawLines();
