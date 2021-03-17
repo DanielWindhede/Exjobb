@@ -24,8 +24,7 @@ public class Controller : MonoBehaviour
 
     [Header("Delaunay Triangulation Settings")]
 
-    [SerializeField] private int _pointAmount;
-    [SerializeField] private Vector2 _bounds;
+    [SerializeField] float _complexityRatio = 8.33f;
 
     [Header("Circuit Settings")]
 
@@ -45,7 +44,6 @@ public class Controller : MonoBehaviour
     [SerializeField] float _maxCurve = 2.0f;
     [SerializeField] float _maxControlPointLength = 1.0f;
     [SerializeField] float _autoCurveWeigth = 0.25f;
-    [SerializeField] float _curvatureScale = 0.035f;
 
     [Header("Manual Settings")]
 
@@ -58,6 +56,7 @@ public class Controller : MonoBehaviour
     private DisplayVoronoiGraph _displayGraph;
     private DisplayPathing _displayPathing;
 
+    private Vector2 _bounds = new Vector2(3, 3);
     private CircuitInformation _circuitInformation;
 
     private void Awake()
@@ -73,11 +72,22 @@ public class Controller : MonoBehaviour
         Refresh();
     }
 
+    /// <summary>
+    /// Calculate amount of points to place dependant on complexity ratio and bounds (should be static bounds)
+    /// </summary>
+    /// <returns></returns>
+    private int GetPointAmount()
+    {
+        return Mathf.RoundToInt(_complexityRatio * _bounds.x * _bounds.y);
+    }
+
     public void Refresh()
     {
         Random.InitState(_seed);
 
-        List<Triangle> triangulation = DelaunayTriangulationGenerator.GenerateDelaunayTriangulatedGraph(_pointAmount, _bounds);
+        int pointAmount = GetPointAmount();
+
+        List<Triangle> triangulation = DelaunayTriangulationGenerator.GenerateDelaunayTriangulatedGraph(pointAmount, _bounds);
         _displayDelaunayTriangulation.Display(triangulation, _bounds);
         VoronoiGraph voronoiGraph = VoronoiDiagramGenerator.GenerateVoronoiFromDelaunay(triangulation, _bounds);
         _displayGraph.Display(voronoiGraph);
