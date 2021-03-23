@@ -114,7 +114,11 @@ public class ControllerEditor : Editor
 		}
 		else
 		{
-			base.OnInspectorGUI();
+            if (GUILayout.Button("Do Test Runs"))
+            {
+                _controller.TestRuns();
+            }
+            base.OnInspectorGUI();
 		}
 	}
 }

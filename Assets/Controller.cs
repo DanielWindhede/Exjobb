@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.IO;
 
 public class Controller : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class Controller : MonoBehaviour
 
     [Header("Main Settings")]
 
+    [SerializeField] int _amountOfTestRuns;
     [SerializeField] int _seed;
     [SerializeField] bool _centerPath = true;
     [SerializeField] Vector2 _centerPoint = Vector2.zero;
@@ -81,29 +83,91 @@ public class Controller : MonoBehaviour
         return Mathf.RoundToInt(_complexityRatio * _bounds.x * _bounds.y);
     }
 
-    public void Refresh()
+    public void Refresh(bool onlyData = false)
     {
         Random.InitState(_seed);
 
         int pointAmount = GetPointAmount();
 
         List<Triangle> triangulation = DelaunayTriangulationGenerator.GenerateDelaunayTriangulatedGraph(pointAmount, _bounds);
-        _displayDelaunayTriangulation.Display(triangulation, _bounds);
+
+        if (!onlyData)
+            _displayDelaunayTriangulation.Display(triangulation, _bounds);
         VoronoiGraph voronoiGraph = VoronoiDiagramGenerator.GenerateVoronoiFromDelaunay(triangulation, _bounds);
-        _displayGraph.Display(voronoiGraph);
+
+        if (!onlyData)
+            _displayGraph.Display(voronoiGraph);
 
         int recursionCounter = 0;
         List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, _minCircuitLength, _maxCircuitLength, _maxStraightLength, _minStraightLength, _minLengthStartGrid, _minLengthFromFinishLine, _minNodeLength, _minTurnAngle, ref recursionCounter, ref _circuitInformation);
-        _displayPathing.Display(path);
 
-        if (_centerPath)
-            CenterPath(_centerPoint, ref path);
+        if (!onlyData)
+        {
+            _displayPathing.Display(path);
 
-        CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(path, _minCurve, _maxCurve, _autoCurveWeigth, _autoCurve);
+            if (_centerPath)
+                CenterPath(_centerPoint, ref path);
 
-        curvaturePoints = _useManualCircuit ? _manualCircuit._circuitPoints : curvaturePoints;
+            CurvaturePoint[] curvaturePoints = Curvature.GenerateCurvaturePointSet(path, _minCurve, _maxCurve, _autoCurveWeigth, _autoCurve);
 
-        _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints, _maxControlPointLength));
+            curvaturePoints = _useManualCircuit ? _manualCircuit._circuitPoints : curvaturePoints;
+
+            _displayCurveScript.SetupCurve(BezierCurve.ConstructBezierCurve(curvaturePoints, _maxControlPointLength));
+        }          
+    }
+
+    public void TestRuns()
+    {
+        double totalCircuitLength = 0;
+        double closingStraightLength = 0;
+        double longestStraigthLength = 0;
+        long turnAmount = 0;
+        double preferredCircuitLength = 0;
+        long amountClockwise = 0;
+
+        for (int i = 0; i < _amountOfTestRuns; i++)
+        {
+            Refresh(true);
+
+            totalCircuitLength += _circuitInformation.circuitLength;
+            closingStraightLength += _circuitInformation.closingStraightLength;
+            longestStraigthLength += _circuitInformation.longestStraightLength;
+            turnAmount += _circuitInformation.turnAmount;
+            preferredCircuitLength += _circuitInformation.preferredCircuitLength;
+            if (_circuitInformation.clockWise)
+                amountClockwise++;
+
+            _seed = Random.Range(int.MinValue, int.MaxValue);
+        }
+
+        float averageCircuitLength = (float)totalCircuitLength / _amountOfTestRuns;
+        float averageClosingStraigthLength = (float)closingStraightLength / _amountOfTestRuns;
+        float averageLongestStraigthLength = (float)longestStraigthLength / _amountOfTestRuns;
+        int averageTurnAmount = Mathf.RoundToInt((float)turnAmount / _amountOfTestRuns);
+        float averagePreferredCircuitLength = (float)preferredCircuitLength / _amountOfTestRuns;
+        float percentageClockwise = ((float)amountClockwise / _amountOfTestRuns) * 100;
+
+        string filePath = Application.persistentDataPath;
+        filePath += "/" + _amountOfTestRuns + ".txt";
+        File.WriteAllText(filePath, string.Empty);
+
+        StreamWriter writer = new StreamWriter(filePath, true);
+
+        writer.WriteLine("For: " + _amountOfTestRuns + " iterations with parameters: ");
+        writer.WriteLine("Complexity ratio: " + _complexityRatio);
+        writer.WriteLine("Min Curve: " + _minCurve + ", Max Curve: " + _maxCurve);
+        writer.WriteLine("Control point length: " + _maxControlPointLength);
+        writer.WriteLine("===================");
+        writer.WriteLine("Average Circuit Length: " + averageCircuitLength);
+        writer.WriteLine("Average Closing Straight Length: " + averageClosingStraigthLength);
+        writer.WriteLine("Average Longest Straight Length: " + averageLongestStraigthLength);
+        writer.WriteLine("Average Turn Amount: " + averageTurnAmount);
+        writer.WriteLine("Average Preferred Circuit Length: " + averagePreferredCircuitLength);
+        writer.WriteLine("Percentage Clockwise: " + percentageClockwise);
+
+        writer.Close();
+
+        Debug.Log("Done!");
     }
 
     /// <summary>
