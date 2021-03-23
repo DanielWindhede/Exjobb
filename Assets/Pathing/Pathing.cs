@@ -323,7 +323,10 @@ public class Pathing
         if (!foundValidCircuit)
         {
             if (recursionCounter++ > 5)
-                throw new System.Exception("Keep failing finding a valid circuit! Probably odd parameters!!!");
+            {
+                circuitInformation.isValid = false;
+                return new List<Vector2>();
+            }
 
             return GenerateRandomCircuit(voronoiGraph, minLength, maxLength, maxStraightLength, minStraightLength, minLengthStartGrid, minLengthFromFinishLine, minNodeLength, minTurnAngle, ref recursionCounter, ref circuitInformation);
         }
@@ -338,6 +341,6 @@ public class Pathing
 
     private static CircuitInformation SetCircuitInformation(VoronoiPath path, float preferredLength)
     {
-        return new CircuitInformation(path.HypothecialCircuitLength, path.ClosingStraightLength, path.LongestStraight, path.PathInPoints.Count - 1, preferredLength, path.IsClockWise);
+        return new CircuitInformation(path.HypothecialCircuitLength, path.ClosingStraightLength, path.LongestStraight, path.PathInPoints.Count - 1, preferredLength, path.IsClockWise, true);
     }
 }

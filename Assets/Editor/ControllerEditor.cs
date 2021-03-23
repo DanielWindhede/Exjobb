@@ -99,6 +99,7 @@ public class ControllerEditor : Editor
 					EditorGUILayout.LabelField("Closing Straight length: " + Math.Round(info.closingStraightLength, 3) + "km", EditorStyles.boldLabel);
 					EditorGUILayout.LabelField("Longest Straight length: " + Math.Round(info.longestStraightLength, 3) + "km", EditorStyles.boldLabel);
 					EditorGUILayout.LabelField("Clockwise: " + info.clockWise, EditorStyles.boldLabel);
+					EditorGUILayout.LabelField("Valid Circuit: " + info.isValid, EditorStyles.boldLabel);
 				}
 
 				EditorGUI.indentLevel = 0;

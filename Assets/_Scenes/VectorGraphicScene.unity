@@ -605,7 +605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _seed
-      value: -1030736956
+      value: -875152254
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _minCurve
@@ -626,6 +626,10 @@ PrefabInstance:
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _minNodeLength
       value: 0.014
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
+      propertyPath: _complexityRatio
+      value: 6.25
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _amountOfTestRuns

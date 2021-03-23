@@ -9,8 +9,9 @@ public struct CircuitInformation
     public int turnAmount;
     public float preferredCircuitLength;
     public bool clockWise;
+    public bool isValid;
 
-    public CircuitInformation(float circuitLength, float closingStraightLength, float longestStraightLength, int turnAmount, float preferredCircuitLength, bool clockWise)
+    public CircuitInformation(float circuitLength, float closingStraightLength, float longestStraightLength, int turnAmount, float preferredCircuitLength, bool clockWise, bool isValid)
     {
         this.circuitLength = circuitLength;
         this.closingStraightLength = closingStraightLength;
@@ -18,6 +19,7 @@ public struct CircuitInformation
         this.turnAmount = turnAmount;
         this.preferredCircuitLength = preferredCircuitLength;
         this.clockWise = clockWise;
+        this.isValid = isValid;
     }
 }
 

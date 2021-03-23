@@ -101,7 +101,7 @@ public class Controller : MonoBehaviour
         int recursionCounter = 0;
         List<Vector2> path = Pathing.GenerateRandomCircuit(voronoiGraph, _minCircuitLength, _maxCircuitLength, _maxStraightLength, _minStraightLength, _minLengthStartGrid, _minLengthFromFinishLine, _minNodeLength, _minTurnAngle, ref recursionCounter, ref _circuitInformation);
 
-        if (!onlyData)
+        if (!onlyData && _circuitInformation.isValid)
         {
             _displayPathing.Display(path);
 
@@ -118,6 +118,13 @@ public class Controller : MonoBehaviour
 
     public void TestRuns()
     {
+        int failedRuns = 0;
+
+        float longestCircuit = float.MinValue;
+        float shortestCircuit = float.MaxValue;
+        int maxTurns = int.MinValue;
+        int minTurns = int.MaxValue;
+
         double totalCircuitLength = 0;
         double closingStraightLength = 0;
         double longestStraigthLength = 0;
@@ -129,41 +136,64 @@ public class Controller : MonoBehaviour
         {
             Refresh(true);
 
-            totalCircuitLength += _circuitInformation.circuitLength;
-            closingStraightLength += _circuitInformation.closingStraightLength;
-            longestStraigthLength += _circuitInformation.longestStraightLength;
-            turnAmount += _circuitInformation.turnAmount;
-            preferredCircuitLength += _circuitInformation.preferredCircuitLength;
-            if (_circuitInformation.clockWise)
-                amountClockwise++;
+            if (_circuitInformation.isValid)
+            {
+                if (_circuitInformation.circuitLength > longestCircuit)
+                    longestCircuit = _circuitInformation.circuitLength;
+                if (_circuitInformation.circuitLength < shortestCircuit)
+                    shortestCircuit = _circuitInformation.circuitLength;
+                if (_circuitInformation.turnAmount > maxTurns)
+                    maxTurns = _circuitInformation.turnAmount;
+                if (_circuitInformation.turnAmount < minTurns)
+                    minTurns = _circuitInformation.turnAmount;
+
+                totalCircuitLength += _circuitInformation.circuitLength;
+                closingStraightLength += _circuitInformation.closingStraightLength;
+                longestStraigthLength += _circuitInformation.longestStraightLength;
+                turnAmount += _circuitInformation.turnAmount;
+                preferredCircuitLength += _circuitInformation.preferredCircuitLength;
+                if (_circuitInformation.clockWise)
+                    amountClockwise++;
+            }
+            else
+                failedRuns++;
 
             _seed = Random.Range(int.MinValue, int.MaxValue);
         }
 
-        float averageCircuitLength = (float)totalCircuitLength / _amountOfTestRuns;
-        float averageClosingStraigthLength = (float)closingStraightLength / _amountOfTestRuns;
-        float averageLongestStraigthLength = (float)longestStraigthLength / _amountOfTestRuns;
-        int averageTurnAmount = Mathf.RoundToInt((float)turnAmount / _amountOfTestRuns);
-        float averagePreferredCircuitLength = (float)preferredCircuitLength / _amountOfTestRuns;
-        float percentageClockwise = ((float)amountClockwise / _amountOfTestRuns) * 100;
+        int succededRuns = _amountOfTestRuns - failedRuns;
+
+        float averageCircuitLength = (float)totalCircuitLength / succededRuns;
+        float averageClosingStraigthLength = (float)closingStraightLength / succededRuns;
+        float averageLongestStraigthLength = (float)longestStraigthLength / succededRuns;
+        int averageTurnAmount = Mathf.RoundToInt((float)turnAmount / succededRuns);
+        float averagePreferredCircuitLength = (float)preferredCircuitLength / succededRuns;
+        float percentageClockwise = ((float)amountClockwise / succededRuns) * 100;
 
         string filePath = Application.persistentDataPath;
-        filePath += "/" + _amountOfTestRuns + ".txt";
+        string filename = "/" + _amountOfTestRuns + "_" + System.DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt";
+        filePath += filename;
         File.WriteAllText(filePath, string.Empty);
 
         StreamWriter writer = new StreamWriter(filePath, true);
 
         writer.WriteLine("For: " + _amountOfTestRuns + " iterations with parameters: ");
-        writer.WriteLine("Complexity ratio: " + _complexityRatio);
+        writer.WriteLine("Completed " + succededRuns + " succeeded runs!");
+        writer.WriteLine("Complexity ratio: " + _complexityRatio + " points/km2");
         writer.WriteLine("Min Curve: " + _minCurve + ", Max Curve: " + _maxCurve);
         writer.WriteLine("Control point length: " + _maxControlPointLength);
         writer.WriteLine("===================");
-        writer.WriteLine("Average Circuit Length: " + averageCircuitLength);
-        writer.WriteLine("Average Closing Straight Length: " + averageClosingStraigthLength);
-        writer.WriteLine("Average Longest Straight Length: " + averageLongestStraigthLength);
-        writer.WriteLine("Average Turn Amount: " + averageTurnAmount);
-        writer.WriteLine("Average Preferred Circuit Length: " + averagePreferredCircuitLength);
-        writer.WriteLine("Percentage Clockwise: " + percentageClockwise);
+        writer.WriteLine("Longest circuit Length: " + longestCircuit + " km");
+        writer.WriteLine("Shortest circuit Length: " + shortestCircuit + " km");
+        writer.WriteLine("Circuit with most turns: " + maxTurns + " st");
+        writer.WriteLine("Circuit with least turns: " + minTurns + " st");
+        writer.WriteLine("===================");
+        writer.WriteLine("Average Circuit Length: " + averageCircuitLength + " km");
+        writer.WriteLine("Average Closing Straight Length: " + averageClosingStraigthLength + " km");
+        writer.WriteLine("Average Longest Straight Length: " + averageLongestStraigthLength + " km");
+        writer.WriteLine("Average Turn Amount: " + averageTurnAmount + " st");
+        writer.WriteLine("Average Preferred Circuit Length: " + averagePreferredCircuitLength + " km");
+        writer.WriteLine("Percentage Clockwise: " + percentageClockwise + " %");
 
         writer.Close();
 
