@@ -605,7 +605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _seed
-      value: -875152254
+      value: 1550407438
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _minCurve
@@ -629,11 +629,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _complexityRatio
-      value: 6.25
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _amountOfTestRuns
-      value: 1000
+      value: 5000
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _useManualCircuit

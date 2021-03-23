@@ -120,6 +120,8 @@ public class Controller : MonoBehaviour
     {
         int failedRuns = 0;
 
+        float longestLongestStraight = float.MinValue;
+        float shortestLongestStraight = float.MaxValue;
         float longestCircuit = float.MinValue;
         float shortestCircuit = float.MaxValue;
         int maxTurns = int.MinValue;
@@ -138,6 +140,10 @@ public class Controller : MonoBehaviour
 
             if (_circuitInformation.isValid)
             {
+                if (_circuitInformation.longestStraightLength > longestLongestStraight)
+                    longestLongestStraight = _circuitInformation.longestStraightLength;
+                if (_circuitInformation.longestStraightLength < shortestLongestStraight)
+                    shortestLongestStraight = _circuitInformation.longestStraightLength;
                 if (_circuitInformation.circuitLength > longestCircuit)
                     longestCircuit = _circuitInformation.circuitLength;
                 if (_circuitInformation.circuitLength < shortestCircuit)
@@ -183,6 +189,8 @@ public class Controller : MonoBehaviour
         writer.WriteLine("Min Curve: " + _minCurve + ", Max Curve: " + _maxCurve);
         writer.WriteLine("Control point length: " + _maxControlPointLength);
         writer.WriteLine("===================");
+        writer.WriteLine("Longest circuit Straight: " + longestLongestStraight + " km");
+        writer.WriteLine("Shortest longest circuit Straight: " + shortestLongestStraight + " km");
         writer.WriteLine("Longest circuit Length: " + longestCircuit + " km");
         writer.WriteLine("Shortest circuit Length: " + shortestCircuit + " km");
         writer.WriteLine("Circuit with most turns: " + maxTurns + " st");
