@@ -62,11 +62,8 @@ public class BezierCurve
         controlPointDirection *= forward ? 1 : -1;
 
         Vector2 controlPointOffset = controlPointDirection.normalized * (forward ? toNext.magnitude / 2f : toPre.magnitude / 2f);
-        controlPointOffset *= points[pointIndex].curveAmount;
 
-        //Clamp to maxLength if too long
-        if (controlPointOffset.magnitude > maxControlPointLength)
-            controlPointOffset = controlPointOffset.normalized * maxControlPointLength;
+        controlPointOffset = controlPointOffset.normalized * Mathf.Min(controlPointOffset.magnitude, maxControlPointLength) * points[pointIndex].curveAmount;
 
         return points[pointIndex].point + controlPointOffset;
     }

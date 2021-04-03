@@ -20,6 +20,8 @@ public struct CurvaturePoint
 
 public class Curvature
 {
+    public static float ANTI_ARTEFACT_EPSILON = 0.02f;
+
     /// <summary>
     /// Generate a set of CurvaturePoint that has point position and curvature for that point
     /// </summary>
@@ -52,6 +54,6 @@ public class Curvature
         // OLD WAY
         //return (Random.Range(min, max) + dotValue) * 0.1f;
 
-        return Mathf.Clamp(Random.Range(min, max) + dotValue * autoCurveWeight, 0.0f, 1.0f);
+        return Mathf.Clamp(Random.Range(min, max) + ANTI_ARTEFACT_EPSILON + dotValue * autoCurveWeight, 0.0f, 1.0f);
     }
 }

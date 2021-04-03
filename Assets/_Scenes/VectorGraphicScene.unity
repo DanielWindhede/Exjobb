@@ -159,7 +159,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.0627451, g: 0.0627451, b: 0.0627451, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -681,7 +681,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _complexityRatio
-      value: 10
+      value: 6.25
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _amountOfTestRuns
@@ -689,11 +689,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _useManualCircuit
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4312146598784043374, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: _maxControlPointLength
-      value: 0.05
+      value: 0.075
       objectReference: {fileID: 0}
     - target: {fileID: 7311257194510682409, guid: 086308496def8004f9a8f8a7c2b8d70e, type: 3}
       propertyPath: m_Name
